@@ -1,0 +1,9 @@
+{
+  "seed": 20260910,
+  "agent_mode": "simulated",
+  "specimen_agent_name": "Simulated Specimen Agent",
+  "specimen_is_simulated": true,
+  "scenario_count": 1000,
+  "generated_at_unix": 1789486392,
+  "elapsed_seconds": 0.37
+}
