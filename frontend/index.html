@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agent Polygraph</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <header class="masthead">
+    <div class="masthead-left">
+      <div class="wordmark">Agent Polygraph</div>
+      <div class="tagline">Crash-testing and evidence dashboard for autonomous trading agents.</div>
+    </div>
+    <div class="masthead-right">
+      <div class="status-line" id="status-line">loading&hellip;</div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="crash-tests">Crash Tests</button>
+    <button class="tab-btn" data-tab="paper-trading">Paper Trading</button>
+  </nav>
+
+
+  <section class="tab-panel active" id="tab-overview">
+    <div class="overview-grid" id="overview-grid">
+
+    </div>
+  </section>
+
+
+  <section class="tab-panel" id="tab-crash-tests">
+    <div class="section-label">Polygraph Synthetic Crash Tests</div>
+    <div class="section-sub">1,000 simulated crash-test scenarios &mdash; controlled and synthetic, not historical trading data.</div>
+
+    <div class="tests-header" style="border:none;padding:0 0 16px;">
+      <label class="agent-switch-label" for="agent-select" style="font-size:12px;color:var(--muted);">Specimen under test</label>
+      <select id="agent-select" class="agent-switch" style="font-family:var(--mono);font-size:13px;padding:6px 10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);">
+        <option value="report">Simulated Specimen Agent</option>
+        <option value="baseline_report">Fixed-Rule Baseline</option>
+      </select>
+    </div>
+
+    <section class="hero" id="hero"></section>
+    <section class="comparison" id="comparison"></section>
+    <section class="breakdown" id="breakdown"></section>
+    <section class="scenario-guide" id="scenario-guide"></section>
+
+    <section class="tests">
+      <div class="tests-header">
+        <h2>Stress test log &mdash; forensic replay</h2>
+        <div class="tests-filters" id="tests-filters"></div>
+      </div>
+      <div class="tests-table-wrap">
+        <table class="tests-table" id="tests-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Category</th>
+              <th>Symbol</th>
+              <th>Decision</th>
+              <th>Risk-approved</th>
+              <th>Result</th>
+            </tr>
+          </thead>
+          <tbody id="tests-tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </section>
+  </section>
+
+  <section class="tab-panel" id="tab-paper-trading">
+    <div class="section-label">Bitget Demo Paper Trading</div>
+    <div class="section-sub">Actual executions from Bitget Demo Trading &mdash; real fills, not simulated.</div>
+    <div id="paper-trading-content">
+
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p><strong>Crash-test provenance:</strong> unless a real model has been swapped in via the LLM adapters
+      (see backend README), the "Simulated Specimen Agent" is a controlled, seeded stand-in built to exhibit two
+      real, well-documented failure modes of autonomous LLM trading agents &mdash; wording-sensitivity and
+      risk overreach under stress &mdash; so the harness has something genuine to catch. It is not fit to
+      any real model's output. The Fixed-Rule Baseline is fully deterministic. All figures in the Crash Tests
+      tab are computed directly from <code>data/report.json</code> and <code>data/baseline_report.json</code>.</p>
+    <p><strong>Paper-trading provenance:</strong> figures in the Paper Trading tab come exclusively from real,
+      confirmed fills on a Bitget Demo account, via <code>real_metrics/compute_metrics.py</code> and
+      <code>polygraph_ingestion</code>. These two evidence sources are never combined into one score.</p>
+  </footer>
+
+  <div class="replay-overlay" id="replay-overlay">
+    <div class="replay-panel" id="replay-panel"></div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
