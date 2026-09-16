@@ -1,0 +1,42 @@
+{
+  "data_source": {
+    "log_path": "../agent/logs/trades.paper.jsonl",
+    "allowed_provenance": [
+      "bitget_paper"
+    ],
+    "note": "Computed exclusively from real Bitget paper-trading fills. Not synthetic, not a backtest."
+  },
+  "metrics": {
+    "trade_count": 1,
+    "win_rate_pct": 0.0,
+    "cumulative_pnl_usdt": -0.034849,
+    "cumulative_return_pct": -0.7038,
+    "max_drawdown_usdt": 0.034849,
+    "sharpe_ratio": null,
+    "sharpe_note": "Not computed: Sharpe needs return variance across multiple trades (n=1). Treat any Sharpe figure below ~30 trades as provisional even once it appears.",
+    "equity_curve": [
+      {
+        "exit_time": "2026-09-13T08:45:14.461Z",
+        "cumulative_pnl_usdt": -0.034849
+      }
+    ],
+    "sample_size_warning": "n=1 completed trades. Statistical metrics (Sharpe, drawdown-as-%-of-risk) are not reliable at this sample size - treat as provisional until n is much larger."
+  },
+  "completed_trades": [
+    {
+      "entry_time": "2026-09-12T13:10:22.295Z",
+      "exit_time": "2026-09-13T08:45:14.461Z",
+      "entry_price": 77366.99,
+      "exit_price": 76822.48,
+      "qty_base": 6.4e-05,
+      "entry_notional_usdt": 4.951487,
+      "exit_notional_usdt": 4.916639,
+      "entry_order_id": "1482655859085824000",
+      "exit_order_id": "1482951514022891520",
+      "net_pnl_usdt": -0.034849,
+      "return_pct": -0.7038,
+      "holding_period_seconds": 70492.166
+    }
+  ],
+  "open_position": null
+}
