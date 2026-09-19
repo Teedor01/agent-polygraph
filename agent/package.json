@@ -1,0 +1,22 @@
+{
+  "name": "agent-polygraph-live-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Real Bitget Agent Hub trading component: market state -> decision -> risk check -> paper order -> execution result -> persistent log. Separate from the Python Polygraph crash-test harness by design (different data source).",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "mock": "npm run build && node lib/agent.js --mode mock",
+    "paper": "npm run build && node lib/agent.js --mode paper"
+  },
+  "dependencies": {
+    "@bitget-ai/bitget-agent-sdk": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^20.14.0"
+  }
+}
