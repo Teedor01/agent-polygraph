@@ -1,0 +1,9 @@
+{
+  "data_source": {
+    "log_path": "somewhere.jsonl",
+    "note": "This fixture omits allowed_provenance entirely to test that the adapter refuses to assume."
+  },
+  "metrics": { "trade_count": 1 },
+  "completed_trades": [],
+  "open_position": null
+}

@@ -1,0 +1,24 @@
+{
+  "data_source": {
+    "log_path": "../agent/logs/trades.paper.jsonl",
+    "allowed_provenance": ["bitget_paper"],
+    "note": "Computed exclusively from real Bitget paper-trading fills. Not synthetic, not a backtest."
+  },
+  "metrics": {
+    "trade_count": 0,
+    "warning": "No completed round-trip trades yet - all metrics below are undefined, not zero.",
+    "win_rate_pct": null,
+    "cumulative_pnl_usdt": null,
+    "cumulative_return_pct": null,
+    "max_drawdown_usdt": null,
+    "sharpe_ratio": null,
+    "equity_curve": []
+  },
+  "completed_trades": [],
+  "open_position": {
+    "entry_time": "2026-09-13T09:00:00.000Z",
+    "entry_price": 77000.0,
+    "qty_base": 0.000065,
+    "note": "Currently open - not counted in win rate, P&L, or Sharpe above."
+  }
+}
