@@ -5,12 +5,15 @@ import { placeOrder } from "./execution.js";
 import { appendLogEntry } from "./logger.js";
 import { loadPosition, savePosition, FLAT_POSITION, type PositionState } from "./position.js";
 import { acquireLock } from "./lock.js";
+import { getLLMDecision } from "./llm_decision.js";
 import { unlinkSync } from "node:fs";
 import path from "node:path";
 
-const TAKE_PROFIT_PCT = 0.005; 
-const STOP_LOSS_PCT = 0.005;  
+const TAKE_PROFIT_PCT = 0.005;
+const STOP_LOSS_PCT = 0.005; 
 const ENTRY_NOTIONAL_USDT = 5;
+
+type DecisionMode = "deterministic" | "llm";
 
 function parseMode(argv: string[]): RunMode {
   const idx = argv.indexOf("--mode");
@@ -23,11 +26,19 @@ function parseMode(argv: string[]): RunMode {
   return mode;
 }
 
+function parseDecisionMode(): DecisionMode {
+  const raw = (process.env.AGENT_MODE || "deterministic").trim();
+  if (raw !== "deterministic" && raw !== "llm") {
+    throw new Error(`Invalid AGENT_MODE='${raw}'. Must be 'deterministic' or 'llm'.`);
+  }
+  return raw;
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function decide(lastPrice: number | null, position: PositionState): Decision {
+function decideDeterministic(lastPrice: number | null, position: PositionState): Decision {
   if (lastPrice === null) {
     return { action: "hold", qty: 0, rationale: "no market price available" };
   }
@@ -64,10 +75,25 @@ function decide(lastPrice: number | null, position: PositionState): Decision {
   };
 }
 
-async function runCycle(ctx: RuntimeContext) {
+async function runCycle(ctx: RuntimeContext, decisionMode: DecisionMode) {
   const positionBefore = await loadPosition(ctx);
   const marketState = await fetchMarketState(ctx);
-  const decision = decide(marketState.lastPrice, positionBefore);
+
+  let decision: Decision;
+  let llmMeta: { provider: string; model: string; raw: { action: string; confidence: number; reason: string } | null; error: string | null } | null = null;
+  let decisionSourceForLog: "deterministic" | "llm" | "llm_fallback" = decisionMode;
+
+  if (marketState.lastPrice === null) {
+    decision = { action: "hold", qty: 0, rationale: "no market price available" };
+  } else if (decisionMode === "llm") {
+    const result = await getLLMDecision(ctx.instrument.symbol, marketState.lastPrice, positionBefore, ENTRY_NOTIONAL_USDT);
+    decision = result.decision;
+    llmMeta = { provider: result.provider, model: result.model, raw: result.llmRaw, error: result.error };
+    decisionSourceForLog = result.error ? "llm_fallback" : "llm";
+  } else {
+    decision = decideDeterministic(marketState.lastPrice, positionBefore);
+  }
+
   const riskVerdict = evaluateRisk(decision, marketState.lastPrice, positionBefore);
 
   const execution =
@@ -94,15 +120,21 @@ async function runCycle(ctx: RuntimeContext) {
     await savePosition(ctx, positionAfter);
   }
 
-  const logPath = await appendLogEntry(ctx, marketState, decision, riskVerdict, execution, positionBefore, positionAfter);
+  const logPath = await appendLogEntry(
+    ctx, marketState, decision, riskVerdict, execution, positionBefore, positionAfter,
+    decisionSourceForLog, llmMeta,
+  );
 
   return {
     timestamp: new Date().toISOString(),
     mode: ctx.mode,
     source: ctx.source,
+    decisionMode,
+    decisionSource: decisionSourceForLog,
     symbol: ctx.instrument.symbol,
     lastPrice: marketState.lastPrice,
     decision,
+    llmMeta,
     riskVerdict,
     execution,
     positionBefore,
@@ -113,6 +145,7 @@ async function runCycle(ctx: RuntimeContext) {
 
 async function main() {
   const mode = parseMode(process.argv.slice(2));
+  const decisionMode = parseDecisionMode();
   const once = process.argv.includes("--once");
   const intervalMs = Number(process.env.AGENT_INTERVAL_MS || 15 * 60 * 1000);
 
@@ -124,7 +157,6 @@ async function main() {
     try {
       unlinkSync(lockPath);
     } catch {
-
     }
     process.exit(code);
   };
@@ -135,21 +167,22 @@ async function main() {
     try {
       unlinkSync(lockPath);
     } catch {
-
     }
   });
 
   console.log(
-    once
-      ? `Running one ${mode} cycle...`
-      : `Running ${mode} continuously, one cycle every ${Math.round(intervalMs / 1000)}s. Press Ctrl+C to stop.`,
+    (once
+      ? `Running one ${mode} cycle (decision mode: ${decisionMode})...`
+      : `Running ${mode} continuously (decision mode: ${decisionMode}), one cycle every ${Math.round(intervalMs / 1000)}s. Press Ctrl+C to stop.`),
   );
+  if (decisionMode === "llm" && !process.env.LLM_API_KEY) {
+    console.warn("AGENT_MODE=llm but LLM_API_KEY is not set - every cycle will hold with an explicit failure reason until it is.");
+  }
 
   try {
-
     while (true) {
       try {
-        const summary = await runCycle(ctx);
+        const summary = await runCycle(ctx, decisionMode);
         console.log(JSON.stringify(summary, null, 2));
       } catch (err) {
         console.error("Cycle failed, will retry next interval:", err instanceof Error ? err.message : err);

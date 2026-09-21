@@ -14,6 +14,8 @@ export interface LogEntry {
   category: string;
   market_state: MarketState;
   decision: Decision;
+  decision_source: "deterministic" | "llm" | "llm_fallback";
+  llm_meta: { provider: string; model: string; raw: { action: string; confidence: number; reason: string } | null; error: string | null } | null;
   risk_verdict: RiskVerdict;
   execution: ExecutionResult | null;
   position_before: PositionState;
@@ -34,6 +36,8 @@ export async function appendLogEntry(
   execution: ExecutionResult | null,
   positionBefore: PositionState,
   positionAfter: PositionState,
+  decisionSource: "deterministic" | "llm" | "llm_fallback" = "deterministic",
+  llmMeta: LogEntry["llm_meta"] = null,
 ): Promise<string> {
   await mkdir(LOG_DIR, { recursive: true });
 
@@ -45,6 +49,8 @@ export async function appendLogEntry(
     category: ctx.instrument.category,
     market_state: marketState,
     decision,
+    decision_source: decisionSource,
+    llm_meta: llmMeta,
     risk_verdict: riskVerdict,
     execution,
     position_before: positionBefore,
