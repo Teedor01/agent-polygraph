@@ -1,13 +1,22 @@
+/* Agent Polygraph - reliability terminal.
+ * Crash Tests: every number read directly from data/report.json /
+ * data/baseline_report.json - nothing invented.
+ * Paper Trading: every number read directly from data/real_trading.json
+ * (itself exported from real_metrics/real_report.json via
+ * polygraph_ingestion). The two are never merged into one score. */
+
 const state = {
-  reports: {},       
+  reports: {},
   meta: null,
-  real: null,        
+  real: null,
   activeAgentKey: "report",
   activeCategory: null,
   activeFilter: "all",
   page: 0,
   pageSize: 25,
-  activeTab: "overview",
+  activePage: "overview",
+  replaySelectedId: null,
+  replayFilterText: "",
 };
 
 const CATEGORY_LABELS = {
@@ -25,6 +34,10 @@ const CATEGORY_LABELS = {
   prompt_perturbation: "Prompt perturbation (consistency)",
 };
 
+const CATEGORY_SWATCH = ["#4C8DFF","#3ED68C","#F1555C","#E8B44A","#B98CFF","#4FD1C5","#F5A3C7","#8891A5","#FF9F5A","#5AC8FA","#C4E86B","#E27DFF"];
+
+/* ---------------- Data loading ---------------- */
+
 async function loadData() {
   const [report, baseline, meta, real] = await Promise.all([
     fetch("data/report.json").then(r => r.json()),
@@ -39,189 +52,328 @@ async function loadData() {
 }
 
 function current() { return state.reports[state.activeAgentKey]; }
-
 function fmtNum(n) { return n.toLocaleString(); }
 function fmtMoney(n) {
   const sign = n < 0 ? "-" : "";
   return `${sign}$${Math.abs(n).toLocaleString(undefined, { maximumFractionDigits: 6 })}`;
 }
-function scoreClass(v) {
-  if (v >= 90) return "pass";
-  if (v >= 70) return "mid";
-  return "fail";
+function scoreClass(v) { return v >= 90 ? "pass" : v >= 70 ? "warn" : "fail"; }
+function na(v, fmt) { return (v === null || v === undefined) ? '<span class="stat-value na">N/A</span>' : fmt(v); }
+function shortTs(ts) { return ts ? ts.slice(0, 16).replace("T", " ") : "N/A"; }
+
+/* Decision provenance badge. Only ever shows one of these three exact
+ * labels - never a provider or model name, per the honesty scope for
+ * this feature. decision_source is the sole source of truth; absence
+ * of the field (older log lines) defaults to "deterministic", which is
+ * accurate since that was the only mode that existed at the time. */
+function provenanceBadge(source) {
+  const s = source || "deterministic";
+  if (s === "llm") return `<span class="badge neutral">LLM</span>`;
+  if (s === "llm_fallback") return `<span class="badge warn">LLM FALLBACK</span>`;
+  return `<span class="badge dim">DETERMINISTIC</span>`;
 }
 
-
-
-function switchTab(tab) {
-  state.activeTab = tab;
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
-  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-  document.getElementById(`tab-${tab}`).classList.add("active");
-}
-
-document.getElementById("tabs").addEventListener("click", (e) => {
-  const btn = e.target.closest(".tab-btn");
-  if (btn) switchTab(btn.dataset.tab);
-});
-
-
-
-function renderStatusLine() {
-  const el = document.getElementById("status-line");
-  const synthLine = `<span class="dot"></span>Crash tests: ${state.meta.scenario_count} scenarios &middot; seed ${state.meta.seed}`;
-
-  let realLine;
-  if (state.real && state.real.report) {
-    const n = state.real.report.metrics.trade_count;
-    realLine = `<span class="dot ${n > 0 ? '' : 'warn'}"></span>Paper trading: ${n} completed trade${n === 1 ? '' : 's'}`;
-  } else {
-    realLine = `<span class="dot warn"></span>Paper trading: no data yet`;
-  }
-  el.innerHTML = `${synthLine}<br>${realLine}`;
-}
-
-
-
-function renderOverview() {
-  const el = document.getElementById("overview-grid");
-  const r = state.reports.report.summary;
-  const cls = scoreClass(r.scores.reliability);
-
-  const real = state.real && state.real.report;
-  const m = real ? real.metrics : null;
-
-  el.innerHTML = `
-    <div class="overview-panel">
-      <div class="panel-head">
-        <span class="panel-title">Crash Tests</span>
-        <button class="panel-link" data-goto="crash-tests">View forensic detail &rarr;</button>
-      </div>
-      <div class="overview-big ${cls}">${r.scores.reliability.toFixed(1)}</div>
-      <div class="overview-sub">Reliability score &middot; ${fmtNum(r.total_tests)} synthetic scenarios</div>
-      <div class="overview-stat-row"><span>Passed</span><span class="v pass">${r.passed}</span></div>
-      <div class="overview-stat-row"><span>Failed</span><span class="v fail">${r.failed}</span></div>
-      <div class="overview-stat-row"><span>Risk violations</span><span class="v fail">${r.risk_violations}</span></div>
-      <div class="overview-stat-row"><span>Decision inconsistencies</span><span class="v fail">${r.decision_inconsistencies}</span></div>
-      <div class="overview-caution">1,000 controlled synthetic scenarios &mdash; not historical, not real trading.</div>
-    </div>
-
-    <div class="overview-panel">
-      <div class="panel-head">
-        <span class="panel-title">Paper Trading</span>
-        <button class="panel-link" data-goto="paper-trading">View execution detail &rarr;</button>
-      </div>
-      ${m ? `
-        <div class="overview-big ${m.trade_count > 0 ? (m.cumulative_pnl_usdt >= 0 ? 'pass' : 'fail') : 'warn'}">${m.trade_count}</div>
-        <div class="overview-sub">Completed trade${m.trade_count === 1 ? '' : 's'} &middot; BTCUSDT, Bitget Demo</div>
-        <div class="overview-stat-row"><span>Win rate</span><span class="v">${m.win_rate_pct !== null ? m.win_rate_pct.toFixed(1) + '%' : 'Insufficient sample'}</span></div>
-        <div class="overview-stat-row"><span>Cumulative P&amp;L</span><span class="v ${m.cumulative_pnl_usdt >= 0 ? 'pass' : 'fail'}">${m.cumulative_pnl_usdt !== null ? fmtMoney(m.cumulative_pnl_usdt) : 'n/a'}</span></div>
-        <div class="overview-stat-row"><span>Sharpe ratio</span><span class="v warn">${m.sharpe_ratio !== null ? m.sharpe_ratio : 'Not computed'}</span></div>
-        <div class="overview-caution">${m.sample_size_warning || 'Actual Bitget Demo executions &mdash; not simulated.'}</div>
-      ` : `
-        <div class="overview-big warn">&mdash;</div>
-        <div class="overview-sub">No real trading data yet</div>
-        <div class="overview-caution">Run the paper-trading agent, then re-export via polygraph_ingestion.</div>
-      `}
+/* Expandable reasoning/confidence detail - only rendered when the
+ * fields actually exist in the record. Nothing here is generated; it
+ * is a direct, unmodified display of what was recorded in the JSONL. */
+function llmDetailToggle(uid, reason, confidence) {
+  if (!reason && confidence === null) return "";
+  return `
+    <button class="small-link llm-detail-toggle" data-detail="${uid}" style="background:none;border:none;cursor:pointer;">Reasoning &#9662;</button>
+    <div class="llm-detail-panel" id="detail-${uid}" style="display:none;font-size:10.5px;color:var(--muted);margin-top:4px;max-width:260px;white-space:normal;">
+      ${reason ? `&ldquo;${reason}&rdquo;` : ""}${confidence !== null && confidence !== undefined ? ` (confidence ${confidence})` : ""}
     </div>
   `;
+}
 
-  el.querySelectorAll("[data-goto]").forEach(btn => {
-    btn.addEventListener("click", () => switchTab(btn.dataset.goto));
+function wireLlmDetailToggles(container) {
+  container.querySelectorAll(".llm-detail-toggle").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const panel = document.getElementById(`detail-${btn.dataset.detail}`);
+      if (panel) panel.style.display = panel.style.display === "none" ? "block" : "none";
+    });
   });
 }
 
+/* ---------------- Navigation ---------------- */
 
+function switchPage(page) {
+  state.activePage = page;
+  document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.page === page));
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(`page-${page}`).classList.add("active");
+  if (page === "failure-replay") renderFailureReplayPage();
+}
 
-function renderHero() {
-  const r = current().summary;
-  const el = document.getElementById("hero");
+document.getElementById("sidebar-nav").addEventListener("click", (e) => {
+  const item = e.target.closest(".nav-item");
+  if (item) switchPage(item.dataset.page);
+});
+
+function goToReplay(scenarioId) {
+  state.replaySelectedId = scenarioId;
+  switchPage("failure-replay");
+}
+
+/* ---------------- Top status ---------------- */
+
+function renderTopStatus() {
+  const dot = document.getElementById("status-dot");
+  const val = document.getElementById("status-value");
+  dot.className = "dot";
+  val.textContent = "Operational";
+}
+
+/* ================= OVERVIEW PAGE ================= */
+
+function renderOverviewPage() {
+  const r = state.reports.report.summary;
   const cls = scoreClass(r.scores.reliability);
-  el.innerHTML = `
-    <div class="hero-score">
-      <div class="label">${r.agent_name}${r.is_simulated ? " &middot; simulated specimen" : ""}</div>
-      <div class="value ${cls}">${r.scores.reliability.toFixed(1)}</div>
-      <div class="subline">Reliability score &middot; ${fmtNum(r.total_tests)} tests &middot;
-        <span class="mono">${r.passed}</span> passed / <span class="mono">${r.failed}</span> failed</div>
+  const real = state.real && state.real.report;
+  const m = real ? real.metrics : null;
+
+  const top = document.getElementById("overview-top");
+  top.innerHTML = `
+    <div class="panel panel-pad">
+      <span class="provenance-pill synthetic">SYNTHETIC / DETERMINISTIC</span>
+      <div class="panel-title">Crash Test Lab</div>
+      <div class="panel-desc">${r.total_tests.toLocaleString()} deterministic scenarios. Tests reliability, risk discipline and consistency.</div>
+      <div class="stat-row cols-4">
+        <div class="stat-cell"><div class="stat-label">Scenarios</div><div class="stat-value">${fmtNum(r.total_tests)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Passed</div><div class="stat-value pass">${fmtNum(r.passed)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Failed</div><div class="stat-value fail">${fmtNum(r.failed)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Reliability</div><div class="stat-value ${cls}">${r.scores.reliability.toFixed(1)}%</div></div>
+      </div>
+      <div class="section-gap">${passFailBar(r.passed, r.failed)}</div>
+      <div class="stat-row cols-3 section-gap">
+        <div class="stat-cell"><div class="stat-label">Risk violations</div><div class="stat-value fail">${fmtNum(r.risk_violations)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Inconsistencies</div><div class="stat-value fail">${fmtNum(r.decision_inconsistencies)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Baseline comparison</div><div class="stat-value">${r.scores.reliability.toFixed(1)} <span style="color:var(--muted);font-size:11px;">vs</span> ${state.reports.baseline_report.summary.scores.reliability.toFixed(1)}</div></div>
+      </div>
     </div>
-    <div class="hero-components">
-      ${componentRow("Consistency", r.scores.consistency)}
-      ${componentRow("Risk discipline", r.scores.risk_discipline)}
-      ${componentRow("Stress performance", r.scores.stress_performance)}
-      ${componentRow("Execution discipline", r.scores.execution_discipline)}
+
+    <div class="panel panel-pad">
+      <span class="provenance-pill real">BITGET DEMO / REAL EXECUTION EVIDENCE</span>
+      <div class="panel-title">Bitget Demo Paper Trading</div>
+      <div class="panel-desc">Real market data. Real autonomous trading loop. Recorded execution evidence &mdash; simulated funds, not real capital.</div>
+      <div class="stat-row cols-4">
+        <div class="stat-cell"><div class="stat-label">Completed trades</div>${m ? `<div class="stat-value">${m.trade_count}</div>` : na(null, x=>x)}</div>
+        <div class="stat-cell"><div class="stat-label">Net P&amp;L</div>${m && m.cumulative_pnl_usdt !== null ? `<div class="stat-value ${m.cumulative_pnl_usdt>=0?'pass':'fail'}">${fmtMoney(m.cumulative_pnl_usdt)}</div>` : na(null,x=>x)}</div>
+        <div class="stat-cell"><div class="stat-label">Win rate</div>${m && m.win_rate_pct !== null ? `<div class="stat-value">${m.win_rate_pct.toFixed(1)}%</div>` : na(null,x=>x)}</div>
+        <div class="stat-cell"><div class="stat-label">Sharpe</div>${m && m.sharpe_ratio !== null ? `<div class="stat-value">${m.sharpe_ratio}</div>` : `<div class="stat-value na">${m ? 'PROVISIONAL' : 'N/A'}</div>`}</div>
+      </div>
+      <div class="stat-row cols-4 section-gap">
+        <div class="stat-cell"><div class="stat-label">Max drawdown</div>${m && m.max_drawdown_usdt !== null ? `<div class="stat-value fail">${fmtMoney(-Math.abs(m.max_drawdown_usdt))}</div>` : na(null,x=>x)}</div>
+        <div class="stat-cell"><div class="stat-label">Current position</div><div class="stat-value ${real && real.open_position ? 'pass' : ''}">${real && real.open_position ? 'LONG' : (real ? 'FLAT' : 'N/A')}</div></div>
+        <div class="stat-cell"><div class="stat-label">Latest execution</div><div class="stat-value" style="font-size:11.5px;">${latestExecTime(real)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Data freshness</div><div class="stat-value na" style="font-size:11px;">SNAPSHOT</div></div>
+      </div>
+      <div class="foot-note section-gap">Note: this is a Bitget Demo environment. No real capital is used.</div>
     </div>
   `;
-}
 
-function componentRow(name, value) {
-  return `
-    <div class="component-row">
-      <div class="row-top"><span class="name">${name}</span><span class="score">${value.toFixed(1)}</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:${value}%"></div></div>
+  const execTrades = document.getElementById("overview-exec-trades");
+  execTrades.innerHTML = `
+    <div class="panel panel-pad">
+      <div class="panel-title" style="font-size:12.5px;">Latest execution <span style="font-weight:400;color:var(--muted);font-size:10px;">SOURCE: BITGET DEMO</span></div>
+      <div class="section-gap" id="latest-exec-timeline"></div>
     </div>
-  `;
-}
-
-function renderComparison() {
-  const specimen = state.reports.report.summary;
-  const baseline = state.reports.baseline_report.summary;
-  const el = document.getElementById("comparison");
-  const rows = [
-    ["Reliability score", specimen.scores.reliability, baseline.scores.reliability, "num"],
-    ["Illustrative return", specimen.cumulative_illustrative_return_pct, baseline.cumulative_illustrative_return_pct, "pct"],
-    ["Max illustrative drawdown", specimen.max_illustrative_drawdown_pct, baseline.max_illustrative_drawdown_pct, "pct"],
-    ["Risk violations", specimen.risk_violations, baseline.risk_violations, "int"],
-    ["Decision inconsistencies", specimen.decision_inconsistencies, baseline.decision_inconsistencies, "int"],
-    ["Human takeover events", specimen.human_takeover_events, baseline.human_takeover_events, "int"],
-  ];
-  el.innerHTML = `
-    <h2>Does autonomy add value, or just add failure modes?</h2>
-    <table class="comparison-table">
-      <thead><tr><th></th><th>${specimen.agent_name}</th><th>${baseline.agent_name}</th></tr></thead>
-      <tbody>
-        ${rows.map(([label, a, b, fmt]) => `
+    <div class="panel panel-pad">
+      <div class="panel-title" style="font-size:12.5px;">Recent demo trades <span style="font-weight:400;color:var(--muted);font-size:10px;">SOURCE: BITGET DEMO</span></div>
+      <div class="table-scroll section-gap">
+        <table class="dtable"><thead><tr><th>Exit</th><th>Entry Px</th><th>Exit Px</th><th>Qty</th><th>Decision</th><th>Net P&amp;L</th></tr></thead>
+        <tbody>${real && real.completed_trades.length ? real.completed_trades.slice(-5).reverse().map(t => `
           <tr>
-            <td>${label}</td>
-            <td class="num">${fmtCell(a, fmt)}</td>
-            <td class="num">${fmtCell(b, fmt)}</td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-    <p class="comparison-note">The specimen's illustrative return is higher than the fixed-rule baseline's - but
-      it gets there with roughly ${(specimen.risk_violations / Math.max(baseline.risk_violations, 1)).toFixed(0)}&times;
-      the risk violations and ${specimen.human_takeover_events} forced human-takeover events against
-      ${baseline.human_takeover_events} for the baseline. A profitable agent that only gets there by breaking its
-      own risk constraints is a failed test, not a successful one - that's the distinction this harness is built to catch.</p>
-  `;
-}
-
-function fmtCell(v, fmt) {
-  if (fmt === "pct") return `${v.toFixed(1)}%`;
-  if (fmt === "int") return fmtNum(v);
-  return v.toFixed(1);
-}
-
-function renderBreakdown() {
-  const r = current().summary;
-  const el = document.getElementById("breakdown");
-  const cards = [
-    [r.risk_violations, "Risk violations"],
-    [r.decision_inconsistencies, `Decision inconsistencies (${r.consistency_groups_flagged}/${r.consistency_groups_total} groups)`],
-    [r.excessive_exposure_events, "Excessive exposure events"],
-    [r.human_takeover_events, "Human takeover events"],
-  ];
-  el.innerHTML = `
-    <h2>Failure breakdown &mdash; ${current().summary.agent_name}</h2>
-    <div class="breakdown-grid">
-      ${cards.map(([num, lbl]) => `
-        <div class="breakdown-card">
-          <div class="num">${fmtNum(num)}</div>
-          <div class="lbl">${lbl}</div>
-        </div>
-      `).join("")}
+            <td>${shortTs(t.exit_time)}</td>
+            <td>${t.entry_price}</td>
+            <td>${t.exit_price}</td>
+            <td>${t.qty_base}</td>
+            <td>${provenanceBadge(t.exit_decision_source)}</td>
+            <td class="${t.net_pnl_usdt === null ? '' : (t.net_pnl_usdt >= 0 ? 'pass' : 'fail')}" style="${t.net_pnl_usdt === null ? 'color:var(--warn)' : ''}">${t.net_pnl_usdt !== null ? fmtMoney(t.net_pnl_usdt) : 'Fee data incomplete'}</td>
+          </tr>`).join("") : `<tr><td colspan="6" style="text-align:center;color:var(--muted);font-family:var(--sans);">No completed trades yet</td></tr>`}
+        </tbody></table>
+      </div>
     </div>
   `;
+  renderExecutionTimeline("latest-exec-timeline", real);
+
+  const failedEl = document.getElementById("overview-failed-scenarios");
+  const failedTests = state.reports.report.tests.filter(t => !t.passed).slice(0, 6);
+  failedEl.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:baseline;">
+      <div class="panel-title" style="font-size:12.5px;">Recent failed scenarios <span class="badge neutral" style="margin-left:6px;">SYNTHETIC</span></div>
+      <span class="small-link" data-goto-page="crash-tests">View all &rarr;</span>
+    </div>
+    <div class="table-scroll section-gap">
+      <table class="dtable">
+        <thead><tr><th>Scenario ID</th><th>Category</th><th>Symbol</th><th>Failure</th><th>Agent action</th><th>Risk result</th><th></th></tr></thead>
+        <tbody>${failedTests.map(t => `
+          <tr class="clickable" data-replay="${t.scenario_id}">
+            <td>${t.scenario_id}</td>
+            <td style="font-family:var(--sans);">${CATEGORY_LABELS[t.category] || t.category}</td>
+            <td>${t.market_state.symbol}</td>
+            <td>${failureBadge(t)}</td>
+            <td>${t.agent_decision.action} ${t.agent_decision.position_size_pct}%</td>
+            <td>${t.risk_verdict.approved_action} ${t.risk_verdict.approved_position_size_pct}%</td>
+            <td class="small-link">Replay &rarr;</td>
+          </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+  wireReplayLinks(failedEl);
+  wireGotoPage(top); wireGotoPage(failedEl);
+}
+
+function failureBadge(t) {
+  if (t.risk_violation) return `<span class="badge fail">Risk violation</span>`;
+  if (t.consistency_flagged) return `<span class="badge warn">Inconsistency</span>`;
+  if (t.human_takeover) return `<span class="badge fail">Human takeover</span>`;
+  return `<span class="badge fail">Stress failure</span>`;
+}
+
+function latestExecTime(real) {
+  if (!real) return "N/A";
+  const t = real.completed_trades.length ? real.completed_trades[real.completed_trades.length - 1].exit_time
+    : (real.open_position ? real.open_position.entry_time : null);
+  return t ? shortTs(t) : "N/A";
+}
+
+function passFailBar(passed, failed) {
+  const total = passed + failed;
+  const pPct = (passed / total * 100).toFixed(1);
+  const fPct = (failed / total * 100).toFixed(1);
+  return `
+    <div class="bar-track-h"><div class="bar-seg-pass" style="width:${pPct}%"></div><div class="bar-seg-fail" style="width:${fPct}%"></div></div>
+    <div class="bar-legend"><span><span class="sw" style="background:var(--pass)"></span>${passed} PASS (${pPct}%)</span><span><span class="sw" style="background:var(--fail)"></span>${failed} FAIL (${fPct}%)</span></div>
+  `;
+}
+
+/* Real-evidence-only execution timeline. Only fields that genuinely
+ * exist in the real trading log are shown; nothing is invented for
+ * steps the data doesn't cover (e.g. the original decision rationale
+ * isn't in real_report.json, so that step just isn't fabricated). */
+function renderExecutionTimeline(containerId, real) {
+  const el = document.getElementById(containerId);
+  if (!real) { el.innerHTML = `<div class="hint-empty">No executions yet</div>`; return; }
+
+  const trades = real.completed_trades;
+  const openPos = real.open_position;
+  const latestTrade = trades.length ? trades[trades.length - 1] : null;
+  const isOpenMoreRecent = openPos && (!latestTrade || openPos.entry_time > latestTrade.exit_time);
+
+  let steps;
+  if (isOpenMoreRecent) {
+    steps = [
+      { time: shortTs(openPos.entry_time), label: "MARKET DATA", chip: "pass", main: "BTCUSDT", detail: `$${openPos.entry_price}` },
+      { time: shortTs(openPos.entry_time), label: "DECISION", chip: "pass", main: "BUY", detail: provenanceBadge(openPos.entry_decision_source) },
+      { time: shortTs(openPos.entry_time), label: "RISK", chip: "pass", main: "APPROVED", detail: "" },
+      { time: shortTs(openPos.entry_time), label: "ORDER", chip: "pass", main: "SUBMITTED", detail: "" },
+      { time: shortTs(openPos.entry_time), label: "FILL", chip: "pass", main: `${openPos.qty_base} BTC`, detail: `@ $${openPos.entry_price}` },
+      { time: shortTs(openPos.entry_time), label: "POSITION", chip: "pass", main: "FLAT &rarr; LONG", detail: `${openPos.qty_base} BTC` },
+    ];
+  } else if (latestTrade) {
+    steps = [
+      { time: shortTs(latestTrade.exit_time), label: "MARKET DATA", chip: "pass", main: "BTCUSDT", detail: `$${latestTrade.exit_price}` },
+      { time: shortTs(latestTrade.exit_time), label: "DECISION", chip: "fail", main: "SELL", detail: provenanceBadge(latestTrade.exit_decision_source) },
+      { time: shortTs(latestTrade.exit_time), label: "RISK", chip: "pass", main: "APPROVED", detail: "" },
+      { time: shortTs(latestTrade.exit_time), label: "ORDER", chip: "pass", main: "SUBMITTED", detail: latestTrade.exit_order_id ? latestTrade.exit_order_id.slice(0,10)+"&hellip;" : "" },
+      { time: shortTs(latestTrade.exit_time), label: "FILL", chip: "pass", main: `${latestTrade.qty_base} BTC`, detail: `@ $${latestTrade.exit_price}` },
+      { time: shortTs(latestTrade.exit_time), label: "POSITION", chip: "warn", main: "LONG &rarr; FLAT", detail: latestTrade.net_pnl_usdt !== null ? fmtMoney(latestTrade.net_pnl_usdt) : "fee data incomplete" },
+    ];
+  } else {
+    el.innerHTML = `<div class="hint-empty">No executions yet</div>`; return;
+  }
+
+  el.innerHTML = `<div class="exec-timeline">${steps.map(s => `
+    <div class="exec-step">
+      <div class="exec-step-time">${s.time}</div>
+      <div class="exec-step-label"><span class="chip ${s.chip}"></span>${s.label}</div>
+      <div class="exec-step-main">${s.main}</div>
+      <div class="exec-step-detail">${s.detail}</div>
+    </div>
+  `).join("")}</div>`;
+}
+
+function wireReplayLinks(container) {
+  container.querySelectorAll("[data-replay]").forEach(row => {
+    row.addEventListener("click", () => goToReplay(row.dataset.replay));
+  });
+}
+function wireGotoPage(container) {
+  container.querySelectorAll("[data-goto-page]").forEach(el => {
+    el.addEventListener("click", () => switchPage(el.dataset.gotoPage));
+  });
+}
+
+/* ================= CRASH TESTS PAGE ================= */
+
+function renderCrashTestsPage() {
+  const r = state.reports.report.summary;
+  const baseline = state.reports.baseline_report.summary;
+
+  document.getElementById("ct-summary").innerHTML = `
+    <div class="panel-title" style="margin-bottom:2px;">Crash Tests</div>
+    <div class="panel-desc">${r.total_tests.toLocaleString()} deterministic scenarios. Tests reliability, risk discipline and consistency.</div>
+    <div class="stat-row cols-7">
+      <div class="stat-cell"><div class="stat-label">Scenarios</div><div class="stat-value">${fmtNum(r.total_tests)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Passed</div><div class="stat-value pass">${fmtNum(r.passed)} (${(r.passed/r.total_tests*100).toFixed(1)}%)</div></div>
+      <div class="stat-cell"><div class="stat-label">Failed</div><div class="stat-value fail">${fmtNum(r.failed)} (${(r.failed/r.total_tests*100).toFixed(1)}%)</div></div>
+      <div class="stat-cell"><div class="stat-label">Reliability</div><div class="stat-value ${scoreClass(r.scores.reliability)}">${r.scores.reliability.toFixed(1)}%</div></div>
+      <div class="stat-cell"><div class="stat-label">Risk violations</div><div class="stat-value fail">${fmtNum(r.risk_violations)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Inconsistencies</div><div class="stat-value fail">${fmtNum(r.decision_inconsistencies)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Baseline comparison</div><div class="stat-value">${r.scores.reliability.toFixed(1)}</div></div>
+    </div>
+  `;
+
+  const counts = categoryCounts();
+  const failedByCategory = {};
+  state.reports.report.tests.filter(t => !t.passed).forEach(t => {
+    const cat = failureCategoryOf(t);
+    failedByCategory[cat] = (failedByCategory[cat] || 0) + 1;
+  });
+
+  document.getElementById("ct-panels").innerHTML = `
+    <div class="panel panel-pad">
+      <div class="panel-title" style="font-size:12.5px;">Pass / Fail Distribution</div>
+      <div class="section-gap">${passFailBar(r.passed, r.failed)}</div>
+    </div>
+    <div class="panel panel-pad">
+      <div class="panel-title" style="font-size:12.5px;">Reliability Comparison</div>
+      <div class="section-gap">
+        ${["consistency","risk_discipline","stress_performance","execution_discipline"].map(k => `
+          <div class="compare-row"><span class="clabel">${k.replace(/_/g," ")}</span>
+            <span class="ctrack"><span class="cfill" style="width:${r.scores[k]}%"></span></span><span class="cval">${r.scores[k].toFixed(0)}</span></div>
+          <div class="compare-row"><span class="clabel" style="color:var(--muted-dim);font-size:10px;">baseline</span>
+            <span class="ctrack"><span class="cfill baseline" style="width:${baseline.scores[k]}%"></span></span><span class="cval" style="color:var(--muted)">${baseline.scores[k].toFixed(0)}</span></div>
+        `).join("")}
+      </div>
+    </div>
+    <div class="panel panel-pad">
+      <div class="panel-title" style="font-size:12.5px;">Failure Categories</div>
+      <div class="dist-list section-gap">${Object.entries(failedByCategory).sort((a,b)=>b[1]-a[1]).map(([cat,count],i) => `
+        <div class="dist-row"><span class="dname"><span class="sw" style="background:${CATEGORY_SWATCH[i%CATEGORY_SWATCH.length]}"></span>${cat}</span><span class="dval">${count}</span></div>
+      `).join("")}</div>
+    </div>
+    <div class="panel panel-pad">
+      <div class="panel-title" style="font-size:12.5px;">Scenario Distribution</div>
+      <div class="dist-list section-gap">${Object.entries(counts).map(([cat,count],i) => `
+        <div class="dist-row"><span class="dname"><span class="sw" style="background:${CATEGORY_SWATCH[i%CATEGORY_SWATCH.length]}"></span>${CATEGORY_LABELS[cat]||cat}</span><span class="dval">${count}</span></div>
+      `).join("")}</div>
+    </div>
+  `;
+
+  renderConsistencySpotlight();
+  renderScenarioGuide();
+  renderFilters();
+  renderTests();
+}
+
+function failureCategoryOf(t) {
+  if (t.risk_violation) return "Risk violation";
+  if (t.consistency_flagged) return "Inconsistency";
+  if (t.human_takeover) return "Human takeover";
+  return "Stress failure";
 }
 
 function categoryCounts() {
@@ -231,18 +383,57 @@ function categoryCounts() {
   return counts;
 }
 
+/* The killer feature: same numbers, five wordings, does the decision change. */
+function renderConsistencySpotlight() {
+  const el = document.getElementById("ct-consistency");
+  const groups = {};
+  state.reports.report.tests.filter(t => t.category === "prompt_perturbation").forEach(t => {
+    groups[t.base_state_id] = groups[t.base_state_id] || [];
+    groups[t.base_state_id].push(t);
+  });
+  const flaggedGroupId = Object.keys(groups).find(id => groups[id][0].consistency_flagged);
+  const group = flaggedGroupId ? groups[flaggedGroupId] : Object.values(groups)[0];
+  if (!group) { el.innerHTML = ""; return; }
+  group.sort((a,b) => a.phrasing_variant.localeCompare(b.phrasing_variant));
+
+  el.innerHTML = `
+    <div class="panel-title" style="font-size:12.5px;">Consistency spotlight <span class="badge ${flaggedGroupId ? 'fail' : 'pass'}" style="margin-left:6px;">${flaggedGroupId ? 'INCONSISTENT' : 'CONSISTENT'}</span></div>
+    <div class="panel-desc">Base scenario <span class="badge dim">${group[0].base_state_id}</span> &mdash; identical underlying market state, five different phrasings.</div>
+    <div class="consistency-variants">
+      ${group.map(v => `
+        <div class="consistency-variant ${v.consistency_flagged ? 'flagged' : ''}">
+          <div class="vlabel">VARIANT ${v.phrasing_variant.toUpperCase()}</div>
+          <div class="vdecision">${v.agent_decision.action} ${v.agent_decision.position_size_pct}%</div>
+        </div>
+      `).join("")}
+    </div>
+    <div class="consistency-note">${flaggedGroupId
+      ? '"Same market state, semantically equivalent presentation, materially different decision."'
+      : 'This group\'s decisions stayed consistent across all five phrasings.'}</div>
+  `;
+}
+
+function filteredTests() {
+  let tests = current().tests;
+  if (state.activeCategory) tests = tests.filter(t => t.category === state.activeCategory);
+  if (state.activeFilter === "failed") tests = tests.filter(t => !t.passed);
+  if (state.activeFilter === "risk") tests = tests.filter(t => t.risk_violation);
+  if (state.activeFilter === "consistency") tests = tests.filter(t => t.consistency_flagged);
+  if (state.activeFilter === "takeover") tests = tests.filter(t => t.human_takeover);
+  return tests;
+}
+
 function renderScenarioGuide() {
   const el = document.getElementById("scenario-guide");
   const counts = categoryCounts();
   el.innerHTML = `
-    <h2>Scenario categories</h2>
-    <div class="category-grid" id="category-grid">
+    <div class="category-grid">
       <div class="category-chip ${state.activeCategory === null ? "active" : ""}" data-cat="">
-        <span class="cat-name">All categories</span><span class="cat-count">${current().tests.length}</span>
+        <span>All categories</span><span class="cat-count">${current().tests.length}</span>
       </div>
       ${Object.entries(counts).map(([cat, count]) => `
         <div class="category-chip ${state.activeCategory === cat ? "active" : ""}" data-cat="${cat}">
-          <span class="cat-name">${CATEGORY_LABELS[cat] || cat}</span><span class="cat-count">${count}</span>
+          <span>${CATEGORY_LABELS[cat] || cat}</span><span class="cat-count">${count}</span>
         </div>
       `).join("")}
     </div>
@@ -257,28 +448,10 @@ function renderScenarioGuide() {
   });
 }
 
-function filteredTests() {
-  let tests = current().tests;
-  if (state.activeCategory) tests = tests.filter(t => t.category === state.activeCategory);
-  if (state.activeFilter === "failed") tests = tests.filter(t => !t.passed);
-  if (state.activeFilter === "risk") tests = tests.filter(t => t.risk_violation);
-  if (state.activeFilter === "consistency") tests = tests.filter(t => t.consistency_flagged);
-  if (state.activeFilter === "takeover") tests = tests.filter(t => t.human_takeover);
-  return tests;
-}
-
 function renderFilters() {
   const el = document.getElementById("tests-filters");
-  const options = [
-    ["all", "All"],
-    ["failed", "Failed only"],
-    ["risk", "Risk violations"],
-    ["consistency", "Consistency failures"],
-    ["takeover", "Human takeover"],
-  ];
-  el.innerHTML = options.map(([key, label]) => `
-    <button class="filter-btn ${state.activeFilter === key ? "active" : ""}" data-filter="${key}">${label}</button>
-  `).join("");
+  const options = [["all","All"],["failed","Failed"],["risk","Risk"],["consistency","Inconsistent"],["takeover","Takeover"]];
+  el.innerHTML = options.map(([key, label]) => `<button class="filter-btn ${state.activeFilter === key ? "active" : ""}" data-filter="${key}">${label}</button>`).join("");
   el.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       state.activeFilter = btn.dataset.filter;
@@ -296,21 +469,17 @@ function renderTests() {
   const start = state.page * state.pageSize;
   const pageTests = tests.slice(start, start + state.pageSize);
 
-  const tbody = document.getElementById("tests-tbody");
-  tbody.innerHTML = pageTests.map((t, i) => `
-    <tr data-idx="${start + i}" data-global-id="${t.scenario_id}">
-      <td class="mono">${start + i + 1}</td>
-      <td>${CATEGORY_LABELS[t.category] || t.category}</td>
-      <td class="mono">${t.market_state.symbol}</td>
-      <td class="mono">${t.agent_decision.action} ${t.agent_decision.position_size_pct}%</td>
-      <td class="mono">${t.risk_verdict.approved_action} ${t.risk_verdict.approved_position_size_pct}%</td>
-      <td><span class="tag ${t.passed ? "pass" : "fail"}">${t.passed ? "Passed" : "Failed"}</span></td>
+  document.getElementById("tests-tbody").innerHTML = pageTests.map((t, i) => `
+    <tr class="clickable" data-replay="${t.scenario_id}">
+      <td>${start + i + 1}</td>
+      <td style="font-family:var(--sans);">${CATEGORY_LABELS[t.category] || t.category}</td>
+      <td>${t.market_state.symbol}</td>
+      <td>${t.agent_decision.action} ${t.agent_decision.position_size_pct}%</td>
+      <td>${t.risk_verdict.approved_action} ${t.risk_verdict.approved_position_size_pct}%</td>
+      <td><span class="badge ${t.passed ? "pass" : "fail"}">${t.passed ? "PASS" : "FAIL"}</span></td>
     </tr>
   `).join("");
-
-  tbody.querySelectorAll("tr").forEach(row => {
-    row.addEventListener("click", () => openReplay(row.dataset.globalId));
-  });
+  wireReplayLinks(document.getElementById("tests-tbody"));
 
   const pag = document.getElementById("pagination");
   pag.innerHTML = `
@@ -322,260 +491,262 @@ function renderTests() {
   document.getElementById("next-page").addEventListener("click", () => { state.page++; renderTests(); });
 }
 
-function findTest(scenarioId) { return current().tests.find(t => t.scenario_id === scenarioId); }
+/* ================= FAILURE REPLAY PAGE ================= */
 
-function openReplay(scenarioId) {
-  const t = findTest(scenarioId);
-  if (!t) return;
-  const ms = t.market_state;
-  const dec = t.agent_decision;
-  const risk = t.risk_verdict;
-
-  const panel = document.getElementById("replay-panel");
-  panel.innerHTML = `
-    <button class="replay-close" id="replay-close">Close</button>
-    <div class="replay-title">${t.scenario_id}</div>
-    <div class="replay-sub">${CATEGORY_LABELS[t.category] || t.category} &middot; ${ms.symbol} &middot;
-      phrasing variant ${t.phrasing_variant} &middot;
-      <span class="tag ${t.passed ? "pass" : "fail"}">${t.passed ? "Passed" : "Failed"}</span></div>
-
-    <div class="replay-step pass">
-      <h4>1. Market state</h4>
-      <div class="body kv-grid">
-        <div class="kv"><div class="k">Price</div><div class="v">${ms.price}</div></div>
-        <div class="kv"><div class="k">Prior price</div><div class="v">${ms.prior_price}</div></div>
-        <div class="kv"><div class="k">Return</div><div class="v">${ms.return_pct.toFixed(2)}%</div></div>
-        <div class="kv"><div class="k">Volatility</div><div class="v">${ms.volatility}</div></div>
-        <div class="kv"><div class="k">Volume vs avg</div><div class="v">${ms.volume_ratio}x</div></div>
-        <div class="kv"><div class="k">Assumed drawdown</div><div class="v">${ms.assumed_drawdown_pct}%</div></div>
-        <div class="kv"><div class="k">Current position</div><div class="v">${ms.current_position_pct}%</div></div>
-        <div class="kv"><div class="k">Data complete</div><div class="v">${ms.data_complete}</div></div>
-      </div>
-    </div>
-
-    <div class="replay-step pass">
-      <h4>2. Information received</h4>
-      <div class="body"><div class="narrative-quote">&ldquo;${ms.narrative}&rdquo;</div></div>
-    </div>
-
-    <div class="replay-step ${risk.violations.length ? "fail" : "pass"}">
-      <h4>3. Agent decision</h4>
-      <div class="body">
-        <strong>${dec.action}</strong> &middot; target size <strong>${dec.position_size_pct}%</strong>
-        &middot; confidence ${dec.confidence}
-        <div style="margin-top:6px;color:var(--muted)">${dec.rationale}</div>
-      </div>
-    </div>
-
-    <div class="replay-step ${risk.violations.length ? "fail" : "pass"}">
-      <h4>4. Risk evaluation</h4>
-      <div class="body">
-        Approved action: <strong>${risk.approved_action}</strong> at <strong>${risk.approved_position_size_pct}%</strong>
-        ${risk.was_modified ? " &mdash; modified from the agent's proposal." : " &mdash; approved as proposed."}
-        ${risk.violations.length ? `<ul class="violation-list">${risk.violations.map(v => `<li>${v}</li>`).join("")}</ul>` : ""}
-      </div>
-    </div>
-
-    <div class="replay-step pass">
-      <h4>5. Order / portfolio impact</h4>
-      <div class="body">
-        Illustrative pnl for this probe: <strong class="mono">${fmtMoney(t.illustrative_pnl)}</strong>
-        &middot; cumulative illustrative pnl at this point in the sequence:
-        <strong class="mono">${fmtMoney(t.cumulative_illustrative_pnl)}</strong>
-      </div>
-    </div>
-
-    ${t.consistency_flagged ? `
-    <div class="replay-step fail">
-      <h4>Consistency failure</h4>
-      <div class="body">
-        This is one of ${5} reworded versions of the identical underlying market state
-        (group <span class="mono">${t.base_state_id}</span>). Across the group the agent produced
-        actions ${t.consistency_group_actions.join(", ")} with a position-size spread of
-        ${t.consistency_group_size_spread} percentage points &mdash; on numbers that never changed,
-        only the wording did.
-      </div>
-    </div>` : ""}
-
-    <div class="replay-step ${t.human_takeover ? "fail" : "pass"}">
-      <h4>${t.human_takeover ? "Human takeover triggered" : "No human takeover required"}</h4>
-      <div class="body">
-        ${t.human_takeover
-          ? "Multiple simultaneous risk breaches (or a failed risk-reduction under stress) crossed the threshold for a forced human review of this decision."
-          : "This decision stayed within a single risk boundary, if any, and did not require escalation."}
-      </div>
-    </div>
-  `;
-
-  document.getElementById("replay-close").addEventListener("click", closeReplay);
-  document.getElementById("replay-overlay").classList.add("open");
+function allFailedForReplay() {
+  const filterText = state.replayFilterText.toLowerCase();
+  return current().tests.filter(t => !t.passed).filter(t =>
+    !filterText || t.scenario_id.toLowerCase().includes(filterText) || (CATEGORY_LABELS[t.category]||"").toLowerCase().includes(filterText)
+  );
 }
 
-function closeReplay() { document.getElementById("replay-overlay").classList.remove("open"); }
+function renderFailureReplayPage() {
+  const failed = allFailedForReplay();
+  if (!state.replaySelectedId && failed.length) state.replaySelectedId = failed[0].scenario_id;
 
+  const listEl = document.getElementById("replay-list");
+  listEl.innerHTML = failed.map(t => `
+    <div class="replay-list-item ${t.scenario_id === state.replaySelectedId ? 'active' : ''}" data-id="${t.scenario_id}">
+      <div class="rid">${t.scenario_id}</div>
+      <div class="rcat">${failureCategoryOf(t)}</div>
+    </div>
+  `).join("") || `<div class="hint-empty" style="margin:12px;">No failed scenarios match</div>`;
+
+  listEl.querySelectorAll(".replay-list-item").forEach(item => {
+    item.addEventListener("click", () => { state.replaySelectedId = item.dataset.id; renderFailureReplayPage(); });
+  });
+
+  const t = current().tests.find(x => x.scenario_id === state.replaySelectedId);
+  document.getElementById("replay-detail").innerHTML = t ? buildReplayChain(t) : `<div class="hint-empty">Select a failed scenario</div>`;
+}
+
+document.getElementById("replay-search").addEventListener("input", (e) => {
+  state.replayFilterText = e.target.value;
+  renderFailureReplayPage();
+});
+
+function buildReplayChain(t) {
+  const ms = t.market_state, dec = t.agent_decision, risk = t.risk_verdict;
+  return `
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+      <div>
+        <div class="panel-title">${t.scenario_id}</div>
+        <div class="panel-desc" style="margin-bottom:0;">${CATEGORY_LABELS[t.category]||t.category} &middot; ${ms.symbol} &middot; variant ${t.phrasing_variant}</div>
+      </div>
+      <span class="badge ${t.passed ? 'pass' : 'fail'}">${t.passed ? 'PASSED' : 'FAILED'}</span>
+    </div>
+
+    <div class="chain-step pass"><h4>Market state</h4><div class="body kv-grid">
+      <div class="kv"><div class="k">Symbol</div><div class="v">${ms.symbol}</div></div>
+      <div class="kv"><div class="k">Price</div><div class="v">${ms.price}</div></div>
+      <div class="kv"><div class="k">Return</div><div class="v">${ms.return_pct.toFixed(2)}%</div></div>
+      <div class="kv"><div class="k">Volatility</div><div class="v">${ms.volatility}</div></div>
+      <div class="kv"><div class="k">Volume vs avg</div><div class="v">${ms.volume_ratio}x</div></div>
+      <div class="kv"><div class="k">Drawdown</div><div class="v">${ms.assumed_drawdown_pct}%</div></div>
+      <div class="kv"><div class="k">Liquidity/position</div><div class="v">${ms.current_position_pct}%</div></div>
+      <div class="kv"><div class="k">Market status</div><div class="v">${ms.is_market_open ? 'OPEN' : 'CLOSED'}</div></div>
+    </div></div>
+
+    <div class="chain-step pass"><h4>Information received</h4><div class="body"><div class="narrative-quote">&ldquo;${ms.narrative}&rdquo;</div></div></div>
+
+    <div class="chain-step ${risk.violations.length ? 'fail':'pass'}"><h4>Agent decision</h4><div class="body">
+      Action: <strong>${dec.action}</strong> &middot; Requested position: <strong>${dec.position_size_pct}%</strong> &middot; confidence ${dec.confidence}
+      <div style="margin-top:5px;color:var(--muted);font-size:11px;">${dec.rationale}</div>
+    </div></div>
+
+    <div class="chain-step ${risk.violations.length ? 'fail':'pass'}"><h4>Risk evaluation</h4><div class="body">
+      Approved action: <strong>${risk.approved_action}</strong> at <strong>${risk.approved_position_size_pct}%</strong>
+      &middot; Modified: <strong>${risk.was_modified ? 'YES' : 'NO'}</strong>
+      ${risk.violations.length ? `<ul class="violation-list">${risk.violations.map(v=>`<li>Violation: ${v}</li>`).join("")}</ul>` : ""}
+      <div style="margin-top:5px;font-size:11px;color:var(--muted);">Agent-proposed: ${dec.position_size_pct}% &rarr; Executed (risk-approved): ${risk.approved_position_size_pct}%</div>
+    </div></div>
+
+    <div class="chain-step pass"><h4>Execution / portfolio impact</h4><div class="body">
+      Illustrative pnl this probe: <strong>${fmtMoney(t.illustrative_pnl)}</strong> &middot; cumulative at this point: <strong>${fmtMoney(t.cumulative_illustrative_pnl)}</strong>
+      <div style="margin-top:4px;font-size:10.5px;color:var(--muted-dim);">Illustrative synthetic figure &mdash; not real trading P&amp;L.</div>
+    </div></div>
+
+    ${t.consistency_flagged ? `<div class="chain-step fail"><h4>Consistency failure</h4><div class="body">
+      One of 5 reworded versions of the identical market state (group ${t.base_state_id}). Actions across the group: ${t.consistency_group_actions.join(", ")},
+      position-size spread ${t.consistency_group_size_spread} pts &mdash; on numbers that never changed, only the wording did.
+    </div></div>` : ""}
+
+    <div class="chain-step ${t.human_takeover ? 'fail':'pass'}"><h4>${t.human_takeover ? 'Human takeover triggered (simulated)' : 'No human takeover required'}</h4><div class="body">
+      ${t.human_takeover ? 'Multiple simultaneous risk breaches crossed the threshold for a simulated forced human review.' : 'Stayed within a single risk boundary, if any.'}
+    </div></div>
+
+    <div class="chain-step fail"><h4>Failure</h4><div class="body">${failureCategoryOf(t)}</div></div>
+  `;
+}
+
+/* ================= PAPER TRADING PAGE ================= */
 
 function renderEquitySVG(equityCurve) {
-  const w = 760, h = 160, pad = 24;
+  const w = 760, h = 140, pad = 20;
   const values = equityCurve.map(p => p.cumulative_pnl_usdt);
-  const min = Math.min(0, ...values);
-  const max = Math.max(0, ...values);
+  const min = Math.min(0, ...values), max = Math.max(0, ...values);
   const range = (max - min) || 1;
   const step = (w - pad * 2) / (equityCurve.length - 1);
-
   const points = equityCurve.map((p, i) => {
     const x = pad + i * step;
     const y = h - pad - ((p.cumulative_pnl_usdt - min) / range) * (h - pad * 2);
     return `${x},${y}`;
   }).join(" ");
-
   const zeroY = h - pad - ((0 - min) / range) * (h - pad * 2);
   const lastPositive = values[values.length - 1] >= 0;
-
-  return `
-    <svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none">
-      <line x1="${pad}" y1="${zeroY}" x2="${w - pad}" y2="${zeroY}" stroke="#262C33" stroke-width="1" stroke-dasharray="3,3" />
-      <polyline points="${points}" fill="none" stroke="${lastPositive ? '#3FBF8F' : '#E2593B'}" stroke-width="1.5" />
-    </svg>
-  `;
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none">
+    <line x1="${pad}" y1="${zeroY}" x2="${w-pad}" y2="${zeroY}" stroke="#232B3D" stroke-width="1" stroke-dasharray="3,3" />
+    <polyline points="${points}" fill="none" stroke="${lastPositive?'#3ED68C':'#F1555C'}" stroke-width="1.5" />
+  </svg>`;
 }
 
-function renderPaperTrading() {
+function renderPaperTradingPage() {
   const el = document.getElementById("paper-trading-content");
   const real = state.real && state.real.report;
 
   if (!real) {
-    el.innerHTML = `
-      <div class="pt-empty">
-        No real trading data available yet. Run the paper-trading agent (<code>agent/</code>),
-        then compute metrics (<code>real_metrics/compute_metrics.py</code>) and re-export
-        (<code>python3 -m polygraph_ingestion.export_for_dashboard</code>).
-        ${state.real && state.real.unavailable_reason ? `<br><br><span style="font-family:var(--mono);font-size:11.5px;">${state.real.unavailable_reason}</span>` : ""}
-      </div>`;
+    el.innerHTML = `<div class="hint-empty">No real trading data available yet. Run the paper-trading agent, compute metrics, and re-export via <code>polygraph_ingestion.export_for_dashboard</code>.
+      ${state.real && state.real.unavailable_reason ? `<br><br><span style="font-family:var(--mono);font-size:10.5px;">${state.real.unavailable_reason}</span>` : ""}</div>`;
     return;
   }
 
-  const m = real.metrics;
-  const trades = real.completed_trades;
-  const openPos = real.open_position;
-
-  const winRateDisplay = m.win_rate_pct !== null
-    ? `<div class="pt-value ${m.win_rate_pct >= 50 ? 'pass' : 'fail'}">${m.win_rate_pct.toFixed(1)}%</div>`
-    : `<div class="pt-value provisional">Insufficient sample</div>`;
-
-  const pnlDisplay = m.cumulative_pnl_usdt !== null
-    ? `<div class="pt-value ${m.cumulative_pnl_usdt >= 0 ? 'pass' : 'fail'}">${fmtMoney(m.cumulative_pnl_usdt)}</div>`
-    : `<div class="pt-value provisional">n/a</div>`;
-
-  const sharpeDisplay = m.sharpe_ratio !== null
-    ? `<div class="pt-value neutral">${m.sharpe_ratio}</div>`
-    : `<div class="pt-value provisional">Not computed</div>`;
-
-  const ddDisplay = m.max_drawdown_usdt !== null
-    ? `<div class="pt-value fail">${fmtMoney(-Math.abs(m.max_drawdown_usdt))}</div>`
-    : `<div class="pt-value provisional">n/a</div>`;
+  const m = real.metrics, trades = real.completed_trades, openPos = real.open_position;
 
   el.innerHTML = `
-    <div class="pt-header">BTCUSDT &middot; Demo environment &middot; ${m.trade_count} completed trade${m.trade_count === 1 ? '' : 's'}</div>
+    <span class="provenance-pill real">BITGET DEMO / REAL EXECUTION EVIDENCE</span>
+    <div class="panel-title">Bitget Demo Paper Trading</div>
+    <div class="panel-desc">BTCUSDT &middot; Demo environment &middot; ${m.trade_count} completed trade${m.trade_count===1?'':'s'}</div>
 
-    <div class="pt-stat-grid">
-      <div class="pt-stat">
-        <div class="pt-label">Completed Trades</div>
-        <div class="pt-value neutral">${m.trade_count}</div>
-      </div>
-      <div class="pt-stat">
-        <div class="pt-label">Win Rate</div>
-        ${winRateDisplay}
-      </div>
-      <div class="pt-stat">
-        <div class="pt-label">Cumulative P&amp;L</div>
-        ${pnlDisplay}
-      </div>
-      <div class="pt-stat">
-        <div class="pt-label">Current Position</div>
-        <div class="pt-value ${openPos ? 'pass' : 'neutral'}">${openPos ? 'LONG' : 'FLAT'}</div>
-        ${openPos ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;">${openPos.qty_base} BTC @ ${openPos.entry_price}</div>` : ''}
+    <div class="stat-row cols-4">
+      <div class="stat-cell"><div class="stat-label">Completed trades</div><div class="stat-value">${m.trade_count}</div></div>
+      <div class="stat-cell"><div class="stat-label">Net P&amp;L</div>${m.cumulative_pnl_usdt!==null?`<div class="stat-value ${m.cumulative_pnl_usdt>=0?'pass':'fail'}">${fmtMoney(m.cumulative_pnl_usdt)}</div>`:`<div class="stat-value na">INSUFFICIENT SAMPLE</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Win rate</div>${m.win_rate_pct!==null?`<div class="stat-value">${m.win_rate_pct.toFixed(1)}%</div>`:`<div class="stat-value na">INSUFFICIENT SAMPLE</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Current position</div><div class="stat-value ${openPos?'pass':''}">${openPos?'LONG':'FLAT'}</div></div>
+    </div>
+    <div class="stat-row cols-4 section-gap">
+      <div class="stat-cell"><div class="stat-label">Max drawdown</div>${m.max_drawdown_usdt!==null?`<div class="stat-value fail">${fmtMoney(-Math.abs(m.max_drawdown_usdt))}</div>`:`<div class="stat-value na">N/A</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Sharpe ratio</div>${m.sharpe_ratio!==null?`<div class="stat-value">${m.sharpe_ratio}</div>`:`<div class="stat-value na">NOT COMPUTED</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Latest execution</div><div class="stat-value" style="font-size:12px;">${latestExecTime(real)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Sample size</div><div class="stat-value ${m.trade_count>=30?'pass':'warn'}">n = ${m.trade_count}</div></div>
+    </div>
+    ${m.sample_size_warning ? `<div class="foot-note section-gap">${m.sample_size_warning}</div>` : ""}
+    ${m.fee_data_warning ? `<div class="foot-note">${m.fee_data_warning}</div>` : ""}
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Agent execution timeline</div>
+      <div class="section-gap" id="pt-exec-timeline"></div>
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Equity curve</div>
+      ${m.equity_curve.length >= 2 ? `<div class="section-gap">${renderEquitySVG(m.equity_curve)}</div>` :
+        `<div class="hint-empty section-gap">Insufficient sample for an equity curve &mdash; ${m.trade_count} completed trade${m.trade_count===1?'':'s'} recorded. At least 2 are needed.</div>`}
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Trade history</div>
+      <div class="table-scroll section-gap">
+        <table class="dtable"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry Px</th><th>Exit Px</th><th>Entry Decision</th><th>Exit Decision</th><th>Fees</th><th>Net P&amp;L</th><th>Return</th></tr></thead>
+        <tbody>${trades.length ? [...trades].reverse().map((t, i) => `
+          <tr>
+            <td>${shortTs(t.exit_time)}</td>
+            <td>BTCUSDT</td>
+            <td><span class="badge fail">SELL</span></td>
+            <td>${t.qty_base}</td>
+            <td>${t.entry_price}</td>
+            <td>${t.exit_price}</td>
+            <td>${provenanceBadge(t.entry_decision_source)}${llmDetailToggle(`entry-${i}`, t.entry_llm_reason, t.entry_llm_confidence)}</td>
+            <td>${provenanceBadge(t.exit_decision_source)}${llmDetailToggle(`exit-${i}`, t.exit_llm_reason, t.exit_llm_confidence)}</td>
+            <td>${t.total_fees_usdt!==null?fmtMoney(t.total_fees_usdt):'N/A'}</td>
+            <td class="${t.net_pnl_usdt===null?'':(t.net_pnl_usdt>=0?'pass':'fail')}" style="${t.net_pnl_usdt===null?'color:var(--warn)':''}">${t.net_pnl_usdt!==null?fmtMoney(t.net_pnl_usdt):'Fee data incomplete'}</td>
+            <td class="${t.return_pct===null?'':(t.return_pct>=0?'pass':'fail')}">${t.return_pct!==null?t.return_pct.toFixed(2)+'%':`Gross: ${fmtMoney(t.gross_pnl_usdt)}`}</td>
+          </tr>`).join("") : `<tr><td colspan="11" style="text-align:center;color:var(--muted);font-family:var(--sans);">No completed trades yet</td></tr>`}
+        </tbody></table>
       </div>
     </div>
 
-    <div class="pt-stat-grid">
-      <div class="pt-stat">
-        <div class="pt-label">Max Drawdown</div>
-        ${ddDisplay}
-      </div>
-      <div class="pt-stat">
-        <div class="pt-label">Sharpe Ratio</div>
-        ${sharpeDisplay}
-      </div>
-      <div class="pt-stat">
-        <div class="pt-label">Latest Execution</div>
-        <div class="pt-value neutral" style="font-size:14px;">${trades.length ? trades[trades.length - 1].exit_time.slice(0, 16).replace('T', ' ') : (openPos ? openPos.entry_time.slice(0,16).replace('T',' ') : 'n/a')}</div>
-      </div>
-      <div class="pt-stat">
-        <div class="pt-label">Sample Size</div>
-        <div class="pt-value ${m.trade_count >= 30 ? 'pass' : 'warn'}">n = ${m.trade_count}</div>
-      </div>
-    </div>
-
-    ${m.sample_size_warning ? `<div class="overview-caution" style="margin-bottom:20px;">${m.sample_size_warning}</div>` : ""}
-
-    <div class="pt-section">
-      <h2>Equity curve</h2>
-      ${m.equity_curve.length >= 2 ? `
-        <div class="equity-chart-wrap">
-          <div class="equity-svg-label">Cumulative realized P&amp;L (USDT) across ${m.equity_curve.length} completed trades &mdash; dollar terms, not %-of-account (account size was never declared to this system)</div>
-          ${renderEquitySVG(m.equity_curve)}
-        </div>
-      ` : `
-        <div class="pt-empty">Insufficient sample for an equity curve &mdash; ${m.trade_count} completed trade${m.trade_count === 1 ? '' : 's'} recorded. At least 2 are needed to plot a line at all.</div>
-      `}
-    </div>
-
-    <div class="pt-section">
-      <h2>Completed trades</h2>
-      ${trades.length ? `
-        <table class="pt-table">
-          <thead><tr><th>Entry</th><th>Exit</th><th>Entry Px</th><th>Exit Px</th><th>Qty (BTC)</th><th>Net P&amp;L</th><th>Return</th></tr></thead>
-          <tbody>
-            ${trades.map(t => `
-              <tr>
-                <td>${t.entry_time.slice(0, 16).replace('T', ' ')}</td>
-                <td>${t.exit_time.slice(0, 16).replace('T', ' ')}</td>
-                <td>${t.entry_price}</td>
-                <td>${t.exit_price}</td>
-                <td>${t.qty_base}</td>
-                <td class="${t.net_pnl_usdt !== null ? (t.net_pnl_usdt >= 0 ? 'pass' : 'fail') : 'warn'}">${t.net_pnl_usdt !== null ? fmtMoney(t.net_pnl_usdt) : `Fee data ${t.fee_data_status === 'unrecognized_fee_currency' ? 'unrecognized' : 'incomplete'}`}</td>
-                <td class="${t.return_pct !== null ? (t.return_pct >= 0 ? 'pass' : 'fail') : 'warn'}">${t.return_pct !== null ? t.return_pct.toFixed(2) + '%' : `Gross: ${fmtMoney(t.gross_pnl_usdt)}`}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      ` : `<div class="pt-empty">No completed round trips yet.</div>`}
-    </div>
-
-    ${openPos ? `
-    <div class="pt-section">
-      <h2>Open position</h2>
-      <div class="kv-grid">
+    ${openPos ? `<div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Open position</div>
+      <div class="kv-grid section-gap">
         <div class="kv"><div class="k">Entry time</div><div class="v">${openPos.entry_time}</div></div>
         <div class="kv"><div class="k">Entry price</div><div class="v">${openPos.entry_price}</div></div>
         <div class="kv"><div class="k">Quantity</div><div class="v">${openPos.qty_base} BTC</div></div>
       </div>
-      <div class="overview-caution">Not counted in win rate, P&amp;L, or Sharpe above until closed.</div>
+      <div class="foot-note">Not counted in win rate, P&amp;L, or Sharpe above until closed.</div>
     </div>` : ""}
+  `;
+  renderExecutionTimeline("pt-exec-timeline", real);
+  wireLlmDetailToggles(el);
+}
+
+/* ================= SYSTEM / EVIDENCE PAGE ================= */
+
+function renderSystemPage() {
+  const el = document.getElementById("system-content");
+  const r = state.reports.report.summary;
+  const real = state.real && state.real.report;
+
+  el.innerHTML = `
+    <div class="grid-2">
+      <div class="panel panel-pad">
+        <div class="panel-title" style="font-size:12.5px;">Scenario Engine</div>
+        <div class="kv-grid section-gap">
+          <div class="kv"><div class="k">Seed</div><div class="v">${state.meta.seed}</div></div>
+          <div class="kv"><div class="k">Scenario count</div><div class="v">${state.meta.scenario_count}</div></div>
+          <div class="kv"><div class="k">Generation time</div><div class="v">${state.meta.elapsed_seconds}s</div></div>
+          <div class="kv"><div class="k">Generated (unix)</div><div class="v">${state.meta.generated_at_unix}</div></div>
+        </div>
+      </div>
+      <div class="panel panel-pad">
+        <div class="panel-title" style="font-size:12.5px;">Synthetic Specimen</div>
+        <div class="kv-grid section-gap">
+          <div class="kv"><div class="k">Specimen type</div><div class="v">${r.agent_name}</div></div>
+          <div class="kv"><div class="k">Simulated</div><div class="v">${r.is_simulated ? 'YES' : 'NO'}</div></div>
+          <div class="kv"><div class="k">Specimen adapter</div><div class="v">${state.meta.agent_mode}</div></div>
+          <div class="kv"><div class="k">Run ID</div><div class="v">seed-${state.meta.seed}</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Evidence</div>
+      <div class="kv-grid section-gap">
+        <div class="kv"><div class="k">Paper-trading log</div><div class="v">${real && real.data_source ? real.data_source.log_path : 'N/A'}</div></div>
+        <div class="kv"><div class="k">Scenario report</div><div class="v">data/report.json</div></div>
+        <div class="kv"><div class="k">Baseline report</div><div class="v">data/baseline_report.json</div></div>
+        <div class="kv"><div class="k">Real report generated</div><div class="v">N/A</div></div>
+      </div>
+    </div>
+
+    <div class="grid-2 section-gap">
+      <div class="panel panel-pad">
+        <span class="provenance-pill synthetic">SYNTHETIC TEST EVIDENCE</span>
+        <div class="kv-grid section-gap">
+          <div class="kv"><div class="k">Status</div><div class="v" style="color:var(--pass)">LOADED</div></div>
+          <div class="kv"><div class="k">Tests</div><div class="v">${r.total_tests}</div></div>
+          <div class="kv"><div class="k">Reliability</div><div class="v">${r.scores.reliability.toFixed(1)}%</div></div>
+        </div>
+      </div>
+      <div class="panel panel-pad">
+        <span class="provenance-pill real">REAL PAPER-TRADING EVIDENCE</span>
+        <div class="kv-grid section-gap">
+          <div class="kv"><div class="k">Status</div><div class="v" style="color:${real?'var(--pass)':'var(--warn)'}">${real ? 'LOADED' : 'NOT YET AVAILABLE'}</div></div>
+          <div class="kv"><div class="k">Trades</div><div class="v">${real ? real.metrics.trade_count : 'N/A'}</div></div>
+          <div class="kv"><div class="k">Provenance</div><div class="v">${real && real.data_source ? real.data_source.allowed_provenance.join(', ') : 'N/A'}</div></div>
+        </div>
+      </div>
+    </div>
   `;
 }
 
+/* ================= BOOT ================= */
 
 function renderAll() {
-  renderStatusLine();
-  renderOverview();
-  renderHero();
-  renderComparison();
-  renderBreakdown();
-  renderScenarioGuide();
-  renderFilters();
-  renderTests();
-  renderPaperTrading();
+  renderTopStatus();
+  renderOverviewPage();
+  renderCrashTestsPage();
+  renderPaperTradingPage();
+  renderSystemPage();
 }
 
 document.getElementById("agent-select").addEventListener("change", (e) => {
@@ -583,18 +754,12 @@ document.getElementById("agent-select").addEventListener("change", (e) => {
   state.activeCategory = null;
   state.activeFilter = "all";
   state.page = 0;
-  renderHero();
-  renderBreakdown();
-  renderScenarioGuide();
-  renderFilters();
-  renderTests();
-});
-
-document.getElementById("replay-overlay").addEventListener("click", (e) => {
-  if (e.target.id === "replay-overlay") closeReplay();
+  renderCrashTestsPage();
 });
 
 loadData().then(renderAll).catch(err => {
-  document.getElementById("overview-grid").innerHTML =
-    `<p style="color:var(--fail);grid-column:1/-1;padding:20px;">Could not load report data: ${err}. Run backend/main.py first, then serve this folder (see README).</p>`;
+  document.getElementById("overview-top").innerHTML =
+    `<p style="color:var(--fail);grid-column:1/-1;padding:20px;">Could not load report data: ${err}. Run backend/main.py first, then serve this folder.</p>`;
+  const dot = document.getElementById("status-dot"); dot.classList.add("fail");
+  document.getElementById("status-value").textContent = "Error";
 });

@@ -11,95 +11,131 @@
 </head>
 <body>
 
-<div id="app">
+<div id="shell">
 
-  <header class="masthead">
-    <div class="masthead-left">
-      <div class="wordmark">Agent Polygraph</div>
-      <div class="tagline">Crash-testing and evidence dashboard for autonomous trading agents.</div>
-    </div>
-    <div class="masthead-right">
-      <div class="status-line" id="status-line">loading&hellip;</div>
-    </div>
-  </header>
-
-  <nav class="tabs" id="tabs">
-    <button class="tab-btn active" data-tab="overview">Overview</button>
-    <button class="tab-btn" data-tab="crash-tests">Crash Tests</button>
-    <button class="tab-btn" data-tab="paper-trading">Paper Trading</button>
-  </nav>
-
-
-  <section class="tab-panel active" id="tab-overview">
-    <div class="overview-grid" id="overview-grid">
-
-    </div>
-  </section>
-
-
-  <section class="tab-panel" id="tab-crash-tests">
-    <div class="section-label">Polygraph Synthetic Crash Tests</div>
-    <div class="section-sub">1,000 simulated crash-test scenarios &mdash; controlled and synthetic, not historical trading data.</div>
-
-    <div class="tests-header" style="border:none;padding:0 0 16px;">
-      <label class="agent-switch-label" for="agent-select" style="font-size:12px;color:var(--muted);">Specimen under test</label>
-      <select id="agent-select" class="agent-switch" style="font-family:var(--mono);font-size:13px;padding:6px 10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);">
-        <option value="report">Simulated Specimen Agent</option>
-        <option value="baseline_report">Fixed-Rule Baseline</option>
-      </select>
-    </div>
-
-    <section class="hero" id="hero"></section>
-    <section class="comparison" id="comparison"></section>
-    <section class="breakdown" id="breakdown"></section>
-    <section class="scenario-guide" id="scenario-guide"></section>
-
-    <section class="tests">
-      <div class="tests-header">
-        <h2>Stress test log &mdash; forensic replay</h2>
-        <div class="tests-filters" id="tests-filters"></div>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="dot"></span><span class="wordmark">AGENT POLYGRAPH</span></div>
+    <div class="sidebar-tagline">Reliability testing for autonomous trading agents</div>
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <div class="nav-item active" data-page="overview">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" stroke="currentColor"/><rect x="9.5" y="1.5" width="5" height="5" stroke="currentColor"/><rect x="1.5" y="9.5" width="5" height="5" stroke="currentColor"/><rect x="9.5" y="9.5" width="5" height="5" stroke="currentColor"/></svg>
+        Overview
       </div>
-      <div class="tests-table-wrap">
-        <table class="tests-table" id="tests-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Category</th>
-              <th>Symbol</th>
-              <th>Decision</th>
-              <th>Risk-approved</th>
-              <th>Result</th>
-            </tr>
-          </thead>
-          <tbody id="tests-tbody"></tbody>
-        </table>
+      <div class="nav-item" data-page="crash-tests">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 13.5L6 6l3 4 2-3 3 6.5" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+        Crash Tests
       </div>
-      <div class="pagination" id="pagination"></div>
-    </section>
-  </section>
-
-  <section class="tab-panel" id="tab-paper-trading">
-    <div class="section-label">Bitget Demo Paper Trading</div>
-    <div class="section-sub">Actual executions from Bitget Demo Trading &mdash; real fills, not simulated.</div>
-    <div id="paper-trading-content">
-
+      <div class="nav-item" data-page="paper-trading">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M1.5 8h4l1.5-4 3 8 1.5-4h3" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+        Paper Trading
+      </div>
+      <div class="nav-item" data-page="failure-replay">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.3"/></svg>
+        Failure Replay
+      </div>
+      <div class="nav-item" data-page="system">
+        <svg viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="3.5" rx="5.5" ry="2" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 3.5v9c0 1.1 2.46 2 5.5 2s5.5-.9 5.5-2v-9" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 8c0 1.1 2.46 2 5.5 2s5.5-.9 5.5-2" stroke="currentColor" stroke-width="1.2"/></svg>
+        System / Evidence
+      </div>
+    </nav>
+    <div class="sidebar-foot" id="sidebar-foot">
+      <div class="row"><span>Synthetic</span><span class="v">local scenarios</span></div>
+      <div class="row"><span>Demo</span><span class="v">Bitget Demo</span></div>
     </div>
-  </section>
+  </aside>
 
-  <footer class="foot">
-    <p><strong>Crash-test provenance:</strong> unless a real model has been swapped in via the LLM adapters
-      (see backend README), the "Simulated Specimen Agent" is a controlled, seeded stand-in built to exhibit two
-      real, well-documented failure modes of autonomous LLM trading agents &mdash; wording-sensitivity and
-      risk overreach under stress &mdash; so the harness has something genuine to catch. It is not fit to
-      any real model's output. The Fixed-Rule Baseline is fully deterministic. All figures in the Crash Tests
-      tab are computed directly from <code>data/report.json</code> and <code>data/baseline_report.json</code>.</p>
-    <p><strong>Paper-trading provenance:</strong> figures in the Paper Trading tab come exclusively from real,
-      confirmed fills on a Bitget Demo account, via <code>real_metrics/compute_metrics.py</code> and
-      <code>polygraph_ingestion</code>. These two evidence sources are never combined into one score.</p>
-  </footer>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title">Agent Polygraph</div>
+        <div class="topbar-sub">Crash-test autonomous trading agents before they trade real capital.</div>
+      </div>
+      <div class="topbar-right">
+        <div class="status-pill"><span class="dot" id="status-dot"></span><span class="label">System</span><span class="value" id="status-value">Loading&hellip;</span></div>
+        <div class="env-badge">DEMO ENVIRONMENT</div>
+      </div>
+    </header>
 
-  <div class="replay-overlay" id="replay-overlay">
-    <div class="replay-panel" id="replay-panel"></div>
+    <div class="page-content">
+
+      <!-- ============== OVERVIEW ============== -->
+      <section class="page active" id="page-overview">
+        <div class="grid-2" id="overview-top"></div>
+        <div class="grid-2 section-gap" id="overview-exec-trades"></div>
+        <div class="panel panel-pad section-gap" id="overview-failed-scenarios"></div>
+      </section>
+
+      <!-- ============== CRASH TESTS ============== -->
+      <section class="page" id="page-crash-tests">
+        <div class="panel panel-pad" id="ct-summary"></div>
+        <div class="grid-4 section-gap" id="ct-panels"></div>
+
+        <div class="panel panel-pad section-gap" id="ct-consistency"></div>
+
+        <div class="panel panel-pad section-gap">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;">
+            <div class="panel-title">Scenario log</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <select id="agent-select" class="select-compact">
+                <option value="report">Simulated Specimen Agent</option>
+                <option value="baseline_report">Fixed-Rule Baseline</option>
+              </select>
+              <div class="tests-filters" id="tests-filters" style="display:flex;gap:6px;"></div>
+            </div>
+          </div>
+          <div class="section-gap" id="scenario-guide"></div>
+          <div class="table-scroll section-gap">
+            <table class="dtable" id="tests-table">
+              <thead><tr><th>#</th><th>Category</th><th>Symbol</th><th>Decision</th><th>Risk-approved</th><th>Result</th></tr></thead>
+              <tbody id="tests-tbody"></tbody>
+            </table>
+          </div>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </section>
+
+      <!-- ============== PAPER TRADING ============== -->
+      <section class="page" id="page-paper-trading">
+        <div id="paper-trading-content"></div>
+      </section>
+
+      <!-- ============== FAILURE REPLAY ============== -->
+      <section class="page" id="page-failure-replay">
+        <div class="panel-title" style="margin-bottom:10px;">Failure Replay</div>
+        <div class="replay-shell">
+          <div class="panel">
+            <input class="replay-search" id="replay-search" placeholder="Search by scenario ID or category&hellip;" />
+            <div class="replay-list" id="replay-list"></div>
+          </div>
+          <div class="panel panel-pad" id="replay-detail"></div>
+        </div>
+      </section>
+
+      <!-- ============== SYSTEM / EVIDENCE ============== -->
+      <section class="page" id="page-system">
+        <div id="system-content"></div>
+      </section>
+
+      <footer style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);">
+        <p class="foot-note"><strong>Synthetic specimen (crash-test harness):</strong> unless a real model has been swapped in via the LLM adapters
+          (see backend README), the "Simulated Specimen Agent" is a controlled, seeded stand-in built to exhibit two
+          real, well-documented failure modes of autonomous LLM trading agents &mdash; wording-sensitivity and
+          risk overreach under stress &mdash; so the harness has something genuine to catch. It is not fit to
+          any real model's output, and its behavior is not proof of how a real LLM behaves. The Fixed-Rule Baseline
+          is fully deterministic. Figures here are computed directly from <code>data/report.json</code> and
+          <code>data/baseline_report.json</code>.</p>
+        <p class="foot-note"><strong>Real Bitget Demo paper-trading agent:</strong> figures come exclusively from real,
+          confirmed fills on a Bitget Demo account &mdash; a simulated-funds environment, not real capital &mdash;
+          via <code>real_metrics/compute_metrics.py</code> and <code>polygraph_ingestion</code>. This is a separate
+          agent from the synthetic specimen above. It can decide each trade either with a fixed deterministic rule or
+          with a configured LLM; the <strong>DETERMINISTIC</strong> / <strong>LLM</strong> / <strong>LLM FALLBACK</strong>
+          label on each trade reflects that specific trade's recorded <code>decision_source</code> and is the only
+          source of truth for how it was decided &mdash; not every trade is necessarily from the same mode, and this
+          page never assumes otherwise. <strong>LLM FALLBACK</strong> means an LLM decision was attempted but failed
+          (for example a network error) and the agent safely held instead. Synthetic and real evidence are never
+          combined into one score.</p>
+      </footer>
+    </div>
   </div>
 
 </div>
