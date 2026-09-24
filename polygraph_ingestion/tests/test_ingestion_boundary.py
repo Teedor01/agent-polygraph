@@ -15,7 +15,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 class TestSyntheticAdapter(unittest.TestCase):
     def test_loads_the_real_existing_synthetic_report_unchanged(self):
         """Uses the actual frontend/data/report.json produced by
-        backend/main.py - not a fixture - to prove the synthetic harness
+        backend/main.py, to prove the synthetic harness
         genuinely still works and is read, not modified."""
         if not DEFAULT_SYNTHETIC_REPORT_PATH.exists():
             self.skipTest("frontend/data/report.json not present - run backend/main.py first")
@@ -74,8 +74,6 @@ class TestIngestionBoundaryNeverMerges(unittest.TestCase):
         self.assertEqual(set(view.keys()), {"synthetic", "real"})
         self.assertEqual(view["synthetic"]["provenance"], "synthetic_crash_test")
         self.assertEqual(view["real"]["provenance"], "bitget_paper_real_trading")
-
-
         self.assertNotIn("metrics", view["synthetic"]["report"])
         self.assertNotIn("completed_trades", view["synthetic"]["report"])
         self.assertNotIn("summary", view["real"]["report"])
