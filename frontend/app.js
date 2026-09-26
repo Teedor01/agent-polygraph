@@ -1,10 +1,3 @@
-/* Agent Polygraph - reliability terminal.
- * Crash Tests: every number read directly from data/report.json /
- * data/baseline_report.json - nothing invented.
- * Paper Trading: every number read directly from data/real_trading.json
- * (itself exported from real_metrics/real_report.json via
- * polygraph_ingestion). The two are never merged into one score. */
-
 const state = {
   reports: {},
   meta: null,
@@ -36,7 +29,18 @@ const CATEGORY_LABELS = {
 
 const CATEGORY_SWATCH = ["#4C8DFF","#3ED68C","#F1555C","#E8B44A","#B98CFF","#4FD1C5","#F5A3C7","#8891A5","#FF9F5A","#5AC8FA","#C4E86B","#E27DFF"];
 
-/* ---------------- Data loading ---------------- */
+
+const FAILURE_CATEGORY_LABELS = {
+  risk_violation: "Risk violation",
+  decision_inconsistency: "Decision inconsistency",
+  invalid_action: "Invalid action",
+  malformed_output: "Malformed output",
+  stale_or_missing_data: "Stale / missing data",
+  execution_constraint_violation: "Execution constraint violation",
+  timeout_or_provider_failure: "Timeout / provider failure",
+};
+
+
 
 async function loadData() {
   const [report, baseline, meta, real] = await Promise.all([
@@ -61,11 +65,7 @@ function scoreClass(v) { return v >= 90 ? "pass" : v >= 70 ? "warn" : "fail"; }
 function na(v, fmt) { return (v === null || v === undefined) ? '<span class="stat-value na">N/A</span>' : fmt(v); }
 function shortTs(ts) { return ts ? ts.slice(0, 16).replace("T", " ") : "N/A"; }
 
-/* Decision provenance badge. Only ever shows one of these three exact
- * labels - never a provider or model name, per the honesty scope for
- * this feature. decision_source is the sole source of truth; absence
- * of the field (older log lines) defaults to "deterministic", which is
- * accurate since that was the only mode that existed at the time. */
+
 function provenanceBadge(source) {
   const s = source || "deterministic";
   if (s === "llm") return `<span class="badge neutral">LLM</span>`;
@@ -73,9 +73,7 @@ function provenanceBadge(source) {
   return `<span class="badge dim">DETERMINISTIC</span>`;
 }
 
-/* Expandable reasoning/confidence detail - only rendered when the
- * fields actually exist in the record. Nothing here is generated; it
- * is a direct, unmodified display of what was recorded in the JSONL. */
+
 function llmDetailToggle(uid, reason, confidence) {
   if (!reason && confidence === null) return "";
   return `
@@ -95,7 +93,6 @@ function wireLlmDetailToggles(container) {
   });
 }
 
-/* ---------------- Navigation ---------------- */
 
 function switchPage(page) {
   state.activePage = page;
@@ -115,7 +112,6 @@ function goToReplay(scenarioId) {
   switchPage("failure-replay");
 }
 
-/* ---------------- Top status ---------------- */
 
 function renderTopStatus() {
   const dot = document.getElementById("status-dot");
@@ -124,7 +120,6 @@ function renderTopStatus() {
   val.textContent = "Operational";
 }
 
-/* ================= OVERVIEW PAGE ================= */
 
 function renderOverviewPage() {
   const r = state.reports.report.summary;
@@ -226,10 +221,8 @@ function renderOverviewPage() {
 }
 
 function failureBadge(t) {
-  if (t.risk_violation) return `<span class="badge fail">Risk violation</span>`;
-  if (t.consistency_flagged) return `<span class="badge warn">Inconsistency</span>`;
-  if (t.human_takeover) return `<span class="badge fail">Human takeover</span>`;
-  return `<span class="badge fail">Stress failure</span>`;
+  const cls = t.failure_category === "decision_inconsistency" ? "warn" : "fail";
+  return `<span class="badge ${cls}">${failureCategoryOf(t)}</span>`;
 }
 
 function latestExecTime(real) {
@@ -249,10 +242,7 @@ function passFailBar(passed, failed) {
   `;
 }
 
-/* Real-evidence-only execution timeline. Only fields that genuinely
- * exist in the real trading log are shown; nothing is invented for
- * steps the data doesn't cover (e.g. the original decision rationale
- * isn't in real_report.json, so that step just isn't fabricated). */
+
 function renderExecutionTimeline(containerId, real) {
   const el = document.getElementById(containerId);
   if (!real) { el.innerHTML = `<div class="hint-empty">No executions yet</div>`; return; }
@@ -370,6 +360,7 @@ function renderCrashTestsPage() {
 }
 
 function failureCategoryOf(t) {
+  if (t.failure_category) return FAILURE_CATEGORY_LABELS[t.failure_category] || t.failure_category;
   if (t.risk_violation) return "Risk violation";
   if (t.consistency_flagged) return "Inconsistency";
   if (t.human_takeover) return "Human takeover";
@@ -647,7 +638,7 @@ function renderPaperTradingPage() {
       <div class="panel-title" style="font-size:12.5px;">Trade history</div>
       <div class="table-scroll section-gap">
         <table class="dtable"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry Px</th><th>Exit Px</th><th>Entry Decision</th><th>Exit Decision</th><th>Fees</th><th>Net P&amp;L</th><th>Return</th></tr></thead>
-        <tbody>${trades.length ? [...trades].reverse().map((t, i) => `
+        <tbody>${trades.length ? trades.map((t, i) => `
           <tr>
             <td>${shortTs(t.exit_time)}</td>
             <td>BTCUSDT</td>

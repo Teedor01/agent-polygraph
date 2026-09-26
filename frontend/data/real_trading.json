@@ -10,12 +10,12 @@
       "note": "Computed exclusively from real Bitget paper-trading fills. Not synthetic, not a backtest."
     },
     "metrics": {
-      "trade_count": 27,
-      "win_rate_pct": 59.26,
-      "cumulative_pnl_usdt": -0.307784,
-      "cumulative_return_pct": -0.2298,
+      "trade_count": 28,
+      "win_rate_pct": 60.71,
+      "cumulative_pnl_usdt": -0.231177,
+      "cumulative_return_pct": -0.1665,
       "max_drawdown_usdt": 0.466447,
-      "sharpe_ratio": -0.2378,
+      "sharpe_ratio": -0.1651,
       "sharpe_note": null,
       "equity_curve": [
         {
@@ -125,11 +125,15 @@
         {
           "exit_time": "2026-09-20T10:21:58.047Z",
           "cumulative_pnl_usdt": -0.307784
+        },
+        {
+          "exit_time": "2026-09-22T16:25:14.544Z",
+          "cumulative_pnl_usdt": -0.231177
         }
       ],
       "trades_with_incomplete_fee_data": 0,
       "fee_data_warning": null,
-      "sample_size_warning": "n=27 fee-complete completed trades. Statistical metrics (Sharpe, drawdown-as-%-of-risk) are not reliable at this sample size - treat as provisional until n is much larger."
+      "sample_size_warning": "n=28 fee-complete completed trades. Statistical metrics (Sharpe, drawdown-as-%-of-risk) are not reliable at this sample size - treat as provisional until n is much larger."
     },
     "completed_trades": [
       {
@@ -806,15 +810,40 @@
         "exit_decision_source": "llm",
         "exit_llm_reason": "Current price is below entry, showing a 1.45% loss and no upside signals, so exiting is prudent.",
         "exit_llm_confidence": 0.6
+      },
+      {
+        "entry_time": "2026-09-21T09:50:04.258Z",
+        "exit_time": "2026-09-22T16:25:14.544Z",
+        "entry_price": 84813.94,
+        "exit_price": 86294.16,
+        "qty_base": 5.8e-05,
+        "entry_notional_usdt": 4.919209,
+        "exit_notional_usdt": 5.005061,
+        "entry_order_id": "1485866935877222400",
+        "exit_order_id": "1486328780673105920",
+        "gross_pnl_usdt": 0.085853,
+        "entry_fee_usdt": 0.0042407,
+        "exit_fee_usdt": 0.00500506,
+        "total_fees_usdt": 0.00924576,
+        "net_pnl_usdt": 0.076607,
+        "fee_data_status": "complete",
+        "return_pct": 1.5573,
+        "holding_period_seconds": 110110.286,
+        "entry_decision_source": "llm",
+        "entry_llm_reason": "price near recent high, bullish momentum",
+        "entry_llm_confidence": 0.6,
+        "exit_decision_source": "llm",
+        "exit_llm_reason": "Position is already +1.73% above entry, near the take-profit target.",
+        "exit_llm_confidence": 0.71
       }
     ],
     "open_position": {
-      "entry_time": "2026-09-21T09:50:04.258Z",
-      "entry_price": 84813.94,
-      "qty_base": 5.8e-05,
-      "entry_decision_source": "llm",
-      "entry_llm_reason": "price near recent high, bullish momentum",
-      "entry_llm_confidence": 0.6,
+      "entry_time": "2026-09-22T16:49:43.351Z",
+      "entry_price": 86385.85,
+      "qty_base": 5.7e-05,
+      "entry_decision_source": "deterministic",
+      "entry_llm_reason": null,
+      "entry_llm_confidence": null,
       "note": "Currently open - not counted in win rate, P&L, or Sharpe above."
     }
   }
