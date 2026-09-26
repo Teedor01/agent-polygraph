@@ -36,6 +36,7 @@ class TestScenarioGeneration(unittest.TestCase):
         for sc in s:
             counts[sc.category] = counts.get(sc.category, 0) + 1
         self.assertEqual(sum(counts.values()), 1000)
+        # 11 stress categories + prompt_perturbation
         self.assertEqual(len(counts), 12)
 
     def test_same_seed_produces_byte_identical_scenarios(self):
@@ -81,7 +82,7 @@ class TestRiskEngine(unittest.TestCase):
 
     def test_drawdown_circuit_breaker_does_not_block_a_hold_or_reduce(self):
         """Only an increase in exposure should be blocked past the
-        drawdown cap... a HOLD at existing size should not itself be
+        drawdown cap - a HOLD at existing size should not itself be
         flagged as a fresh violation."""
         state = _state(category="normal", current_position_pct=10.0,
                        assumed_drawdown_pct=RISK_RULES["max_drawdown_pct"] + 5.0)
@@ -134,18 +135,21 @@ class TestAgentDecisionBehavior(unittest.TestCase):
     def test_simulated_agent_decision_depends_on_exact_wording_not_just_numbers(self):
         """This is the specimen's deliberate, documented flaw - two
         narratives describing identical numbers can still diverge. Proving
-        it exists (not fixing it... the harness exists specifically to
+        it exists (not fixing it - the harness exists specifically to
         catch this)."""
         agent = agents_mod.SimulatedAgent()
         base = dict(category="normal", price=100.0, prior_price=100.0, news_signal=0.0,
                     news_confidence=0.0, current_position_pct=20.0)
         state_a = _state(narrative="NVDA is flat today.", **base)
         state_b = _state(narrative="Nothing much happening with NVDA right now, all quiet.", **base)
+        # Structured numeric fields are identical between the two states;
+        # only the text differs. At least confirm the mechanism the
+        # narrative-hash noise depends on actually varies with wording.
         from market_state import stable_hash
         self.assertNotEqual(stable_hash(state_a.narrative), stable_hash(state_b.narrative))
 
     def test_simulated_agent_decision_is_reproducible_for_identical_input(self):
-        """Same state object, called twice, must give the same decision...
+        """Same state object, called twice, must give the same decision -
         the noise is a deterministic hash of the narrative, not real
         randomness."""
         agent = agents_mod.SimulatedAgent()
@@ -164,6 +168,7 @@ class TestEvaluatorOutput(unittest.TestCase):
         agent2 = agents_mod.RuleBasedAgent()
         report1 = evaluator_mod.run(agent1, s1)
         report2 = evaluator_mod.run(agent2, s2)
+        # Deterministic agent + deterministic scenarios -> identical summary
         self.assertEqual(report1["summary"]["total_tests"], report2["summary"]["total_tests"])
         self.assertEqual(report1["summary"]["passed"], report2["summary"]["passed"])
         self.assertEqual(report1["summary"]["scores"], report2["summary"]["scores"])
@@ -192,12 +197,99 @@ class TestEvaluatorOutput(unittest.TestCase):
 
     def test_deterministic_baseline_scores_perfect_consistency(self):
         """The fixed-rule baseline ignores narrative text entirely, so it
-        must be perfectly consistent across reworded phrasing variants...
+        must be perfectly consistent across reworded phrasing variants -
         this is the contrast the dashboard's comparison table relies on."""
         s = scenarios_mod.generate_scenarios()
         report = evaluator_mod.run(agents_mod.RuleBasedAgent(), s)
         self.assertEqual(report["summary"]["scores"]["consistency"], 100.0)
         self.assertEqual(report["summary"]["decision_inconsistencies"], 0)
+
+
+class _ExplodingAgent:
+    """An agent that always raises - stands in for a provider outage or
+    a network failure at the harness's agent boundary."""
+
+    name = "Exploding Agent"
+    is_simulated = True
+
+    def __init__(self, exc: Exception):
+        self._exc = exc
+
+    def decide(self, state):
+        raise self._exc
+
+
+class _MalformedAgent:
+    """An agent that returns structurally present but invalid fields -
+    stands in for a real model that ignored the required output shape."""
+
+    name = "Malformed Agent"
+    is_simulated = True
+
+    def __init__(self, action="HOLD", position_size_pct=20.0, confidence=0.5):
+        self._action = action
+        self._position_size_pct = position_size_pct
+        self._confidence = confidence
+
+    def decide(self, state):
+        return AgentDecision(self._action, self._position_size_pct, self._confidence, "x")
+
+
+class TestFailureTaxonomy(unittest.TestCase):
+    def test_agent_exception_is_caught_and_categorized_as_malformed_output(self):
+        agent = _ExplodingAgent(ValueError("bad json from provider"))
+        report = evaluator_mod.run(agent, [_state()])
+        t = report["tests"][0]
+        self.assertFalse(t["passed"])
+        self.assertEqual(t["failure_category"], "malformed_output")
+        self.assertEqual(t["agent_decision"]["action"], "HOLD")
+
+    def test_agent_timeout_is_categorized_as_timeout_or_provider_failure(self):
+        agent = _ExplodingAgent(TimeoutError("request timed out"))
+        report = evaluator_mod.run(agent, [_state()])
+        t = report["tests"][0]
+        self.assertEqual(t["failure_category"], "timeout_or_provider_failure")
+
+    def test_out_of_taxonomy_action_is_categorized_as_invalid_action_and_forced_to_hold(self):
+        agent = _MalformedAgent(action="SHORT")
+        report = evaluator_mod.run(agent, [_state()])
+        t = report["tests"][0]
+        self.assertEqual(t["failure_category"], "invalid_action")
+        self.assertEqual(t["agent_decision"]["action"], "HOLD")
+
+    def test_out_of_range_position_size_is_categorized_as_malformed_output(self):
+        agent = _MalformedAgent(position_size_pct=250.0)
+        report = evaluator_mod.run(agent, [_state()])
+        t = report["tests"][0]
+        self.assertEqual(t["failure_category"], "malformed_output")
+
+    def test_a_single_agent_failure_does_not_stop_the_rest_of_the_run(self):
+        agent = _ExplodingAgent(RuntimeError("boom"))
+        s = [_state(scenario_id=f"t-{i:04d}-v1", base_state_id=f"t-{i:04d}") for i in range(5)]
+        report = evaluator_mod.run(agent, s)
+        self.assertEqual(len(report["tests"]), 5)
+        self.assertEqual(report["summary"]["malformed_outputs"], 5)
+
+    def test_a_passing_scenario_has_no_failure_category(self):
+        s = scenarios_mod.generate_scenarios()
+        report = evaluator_mod.run(agents_mod.RuleBasedAgent(), s)
+        for t in report["tests"]:
+            if t["passed"]:
+                self.assertIsNone(t["failure_category"])
+
+    def test_every_failed_scenario_has_a_category_from_the_taxonomy(self):
+        from market_state import FAILURE_CATEGORIES
+        s = scenarios_mod.generate_scenarios()
+        report = evaluator_mod.run(agents_mod.SimulatedAgent(), s)
+        for t in report["tests"]:
+            if not t["passed"]:
+                self.assertIn(t["failure_category"], FAILURE_CATEGORIES)
+
+    def test_summary_failure_categories_sum_to_total_failed(self):
+        s = scenarios_mod.generate_scenarios()
+        report = evaluator_mod.run(agents_mod.SimulatedAgent(), s)
+        summary = report["summary"]
+        self.assertEqual(sum(summary["failure_categories"].values()), summary["failed"])
 
 
 if __name__ == "__main__":
