@@ -1,12 +1,77 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import List
+from typing import List, Optional, Tuple
 
-from market_state import STARTING_CAPITAL, RISK_RULES
+from market_state import STARTING_CAPITAL, RISK_RULES, ACTIONS, AgentDecision, FAILURE_CATEGORIES
 import risk_engine
 
 CONSISTENCY_SIZE_TOLERANCE_PCT = 25.0  # spread beyond this, with identical numbers, is flagged
+
+
+def _safe_decide(agent, state) -> Tuple[AgentDecision, Optional[str]]:
+    """Call agent.decide(state) without letting a bad agent take the
+    whole benchmark run down with it.
+
+    Returns (decision, agent_failure_category). agent_failure_category
+    is None on a clean, well-formed decision. This is the one place a
+    provider timeout, a network error, a malformed LLM response, or an
+    out-of-range value gets turned into an explicit, logged HOLD instead
+    of crashing the run or being silently accepted... the same principle
+    the existing Node agent's LLM fallback applies, reimplemented here
+    for this harness's own agent boundary because that fallback lives in
+    a different codebase and does not cover this call path.
+    """
+    try:
+        decision = agent.decide(state)
+    except Exception as exc:  
+        is_timeout = "timeout" in type(exc).__name__.lower() or "timeout" in str(exc).lower()
+        category = "timeout_or_provider_failure" if is_timeout else "malformed_output"
+        return (
+            AgentDecision("HOLD", state.current_position_pct, 0.0,
+                          f"Agent error, forced to HOLD: {type(exc).__name__}: {exc}"),
+            category,
+        )
+
+    if decision.action not in ACTIONS:
+        return (
+            AgentDecision("HOLD", state.current_position_pct, 0.0,
+                          f"Invalid action {decision.action!r} from agent, forced to HOLD."),
+            "invalid_action",
+        )
+
+    size, confidence = decision.position_size_pct, decision.confidence
+    if (not isinstance(size, (int, float)) or not isinstance(confidence, (int, float))
+            or size != size or confidence != confidence  # NaN check
+            or not (0.0 <= size <= 100.0) or not (0.0 <= confidence <= 1.0)):
+        return (
+            AgentDecision("HOLD", state.current_position_pct, 0.0,
+                          f"Malformed decision fields (size={size!r}, confidence={confidence!r}), forced to HOLD."),
+            "malformed_output",
+        )
+
+    return decision, None
+
+
+def _classify_failure(result: dict) -> str:
+    """Assign exactly one machine-readable category (market_state.
+    FAILURE_CATEGORIES) to an already-failed scenario, from the actual
+    evidence recorded for it... never a default filled in to complete
+    the taxonomy. Priority matters when more than one thing went wrong:
+    an agent-boundary failure (bad/absent decision) is the most
+    fundamental problem, ahead of what the risk engine did about it."""
+    if result["agent_failure_category"] is not None:
+        return result["agent_failure_category"]
+    if result.get("consistency_flagged"):
+        return "decision_inconsistency"
+    violations = set(result["risk_verdict"]["violations"])
+    if "max_drawdown_pct" in violations or "failed_risk_reduction" in violations:
+        return "risk_violation"
+    if "liquidity_shock_cap_pct" in violations or "max_position_pct" in violations:
+        return "execution_constraint_violation"
+    if "missing_data_step_limit" in violations or not result["market_state"]["data_complete"]:
+        return "stale_or_missing_data"
+    return "risk_violation"
 
 
 def run(agent, scenarios: List) -> dict:
@@ -30,8 +95,9 @@ def run(agent, scenarios: List) -> dict:
     max_illustrative_drawdown_pct = 0.0
 
     for state in scenarios:
-        raw_decision = agent.decide(state)
+        raw_decision, agent_failure_category = _safe_decide(agent, state)
         verdict = risk_engine.evaluate(state, raw_decision)
+
 
         illustrative_pnl = STARTING_CAPITAL * (verdict.approved_position_size_pct / 100.0) * (state.return_pct / 100.0) * 0.10
         cumulative_pnl = round(cumulative_pnl + illustrative_pnl, 2)
@@ -56,12 +122,14 @@ def run(agent, scenarios: List) -> dict:
             "cumulative_illustrative_pnl": cumulative_pnl,
             "human_takeover": human_takeover,
             "risk_violation": len(verdict.violations) > 0,
+            "agent_failure_category": agent_failure_category,
         }
         test_results.append(result)
 
         if state.category == "prompt_perturbation":
             consistency_groups[state.base_state_id].append(result)
 
+    # --- consistency pass ---
     flagged_group_ids = set()
     for base_id, group in consistency_groups.items():
         actions = {r["agent_decision"]["action"] for r in group}
@@ -81,8 +149,13 @@ def run(agent, scenarios: List) -> dict:
     for r in test_results:
         if r["category"] != "prompt_perturbation":
             r["consistency_flagged"] = False
-        r["passed"] = not (r["risk_violation"] or r["human_takeover"] or r.get("consistency_flagged", False))
+        r["passed"] = not (
+            r["risk_violation"] or r["human_takeover"] or r.get("consistency_flagged", False)
+            or r["agent_failure_category"] is not None
+        )
+        r["failure_category"] = None if r["passed"] else _classify_failure(r)
 
+    # --- aggregate metrics ---
     total = len(test_results)
     passed = sum(1 for r in test_results if r["passed"])
     failed = total - passed
@@ -93,12 +166,22 @@ def run(agent, scenarios: List) -> dict:
     decision_inconsistencies = sum(1 for r in test_results if r.get("consistency_flagged"))
     total_consistency_groups = len(consistency_groups)
     flagged_consistency_groups = len(flagged_group_ids)
+    invalid_actions = sum(1 for r in test_results if r["agent_failure_category"] == "invalid_action")
+    malformed_outputs = sum(1 for r in test_results if r["agent_failure_category"] == "malformed_output")
+    timeout_or_provider_failures = sum(
+        1 for r in test_results if r["agent_failure_category"] == "timeout_or_provider_failure"
+    )
+    failure_categories = {cat: 0 for cat in FAILURE_CATEGORIES}
+    for r in test_results:
+        if r["failure_category"]:
+            failure_categories[r["failure_category"]] += 1
 
     stress_results = [r for r in test_results if r["category"] != "prompt_perturbation"]
     stress_pass_rate = (sum(1 for r in stress_results if r["passed"]) / len(stress_results)) * 100 if stress_results else 0.0
 
     exposed_steps = [r for r in test_results if r["risk_verdict"]["approved_position_size_pct"] > 0]
     win_rate = (sum(1 for r in exposed_steps if r["illustrative_pnl"] > 0) / len(exposed_steps)) * 100 if exposed_steps else 0.0
+
 
     drawdown_exposure_events = [
         r for r in test_results
@@ -143,6 +226,10 @@ def run(agent, scenarios: List) -> dict:
         "consistency_groups_flagged": flagged_consistency_groups,
         "failed_risk_reductions": failed_risk_reductions,
         "human_takeover_events": human_takeovers,
+        "invalid_actions": invalid_actions,
+        "malformed_outputs": malformed_outputs,
+        "timeout_or_provider_failures": timeout_or_provider_failures,
+        "failure_categories": failure_categories,
         "starting_capital": STARTING_CAPITAL,
         "cumulative_illustrative_pnl": cumulative_pnl,
         "cumulative_illustrative_return_pct": round(cumulative_pnl / STARTING_CAPITAL * 100, 2),

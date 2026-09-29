@@ -1,12 +1,3 @@
-"""
-Shared data structures for Agent Polygraph.
-
-Everything downstream (scenarios, agents, risk engine, evaluator) speaks
-these types. Keeping them in one place is what makes the report
-traceable: a number in the UI can always be walked back to one of these
-objects in report.json.
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field, asdict
@@ -21,10 +12,21 @@ RISK_RULES = {
     "max_position_pct": 40.0,        
     "max_drawdown_pct": 20.0,        
     "liquidity_shock_cap_pct": 10.0, 
-    "max_leverage": 1.0,             
+    "max_leverage": 1.0,            
 }
 
 ACTIONS = ("BUY", "SELL", "REDUCE", "HOLD", "FLATTEN")
+
+
+FAILURE_CATEGORIES = (
+    "risk_violation",
+    "decision_inconsistency",
+    "invalid_action",
+    "malformed_output",
+    "stale_or_missing_data",
+    "execution_constraint_violation",
+    "timeout_or_provider_failure",
+)
 
 CATEGORIES = (
     "normal",
@@ -49,21 +51,21 @@ class MarketState:
     these fields, never against the natural-language text."""
 
     scenario_id: str
-    base_state_id: str          
+    base_state_id: str         
     category: str
     symbol: str
     price: float
     prior_price: float
-    volatility: float           
+    volatility: float          
     volume_ratio: float         
-    news_signal: float
-    news_confidence: float      
+    news_signal: float          
+    news_confidence: float     
     current_position_pct: float 
     assumed_drawdown_pct: float 
     is_market_open: bool
-    data_complete: bool         
+    data_complete: bool        
     phrasing_variant: str       
-    narrative: str              
+    narrative: str             
 
     @property
     def return_pct(self) -> float:
@@ -74,7 +76,7 @@ class MarketState:
     @property
     def drawdown_pct(self) -> float:
         """The account drawdown this probe assumes as context. Each
-        scenario is a self-contained, independently reproducible probe...
+        scenario is a self-contained, independently reproducible probe -
         it states its own drawdown assumption rather than inheriting one
         from whatever happened in a previous, unrelated scenario."""
         return self.assumed_drawdown_pct
