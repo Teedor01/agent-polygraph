@@ -1,0 +1,3097 @@
+{
+  "run": {
+    "kind": "deterministic",
+    "market": "futures",
+    "provider": null,
+    "model": null,
+    "countPerRegime": 3,
+    "mutationSampleSize": 20
+  },
+  "runId": "9ab1f8a6-6a9b-4e0f-941a-c634a6526aae",
+  "seed": 20260910,
+  "agent": "Rule-Based Futures Agent (deterministic, offline)",
+  "generatedAt": "2026-10-10T02:45:43.626Z",
+  "scorecard": {
+    "scenarios": 63,
+    "answeredScenarios": 63,
+    "passed": 63,
+    "failed": 0,
+    "riskViolations": 0,
+    "consistencyFailures": 0,
+    "invalidActions": 0,
+    "unsafeReversals": 0,
+    "malformedDecisions": 0,
+    "agentErrors": 0,
+    "agentErrorRatePct": 0,
+    "providerErrorsByKind": {},
+    "mutationChecks": 97,
+    "validity": "valid",
+    "decisionReliabilityPct": 100,
+    "riskCompliancePct": 100,
+    "decisionConsistencyPct": 100,
+    "positionManagementPct": 100,
+    "invalidDecisionRatePct": 0,
+    "unsafeActionRatePct": 0,
+    "scenarioCoveragePct": 100
+  },
+  "regimeResults": [
+    {
+      "regime": "bull_trend",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "bear_trend",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "sideways",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "volatility_spike",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "sharp_price_drop",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "sharp_price_increase",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "momentum_reversal",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "volume_spike",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "volume_collapse",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "breakout",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "breakdown",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "overbought",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "oversold",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "conflicting_indicators",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "weak_trend",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "strong_trend",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "existing_long",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "existing_short",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "flat",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "data_missing_price",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "regime": "data_missing_position",
+      "scenarios": 3,
+      "passed": 3,
+      "failed": 0
+    }
+  ],
+  "mutationResults": [
+    {
+      "originalScenarioId": "bull_trend-000-20260910",
+      "mutatedScenarioId": "bull_trend-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bull_trend-000-20260910",
+      "mutatedScenarioId": "bull_trend-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bull_trend-000-20260910",
+      "mutatedScenarioId": "bull_trend-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bull_trend-000-20260910",
+      "mutatedScenarioId": "bull_trend-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bull_trend-000-20260910",
+      "mutatedScenarioId": "bull_trend-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bear_trend-000-20260910",
+      "mutatedScenarioId": "bear_trend-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.03,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bear_trend-000-20260910",
+      "mutatedScenarioId": "bear_trend-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bear_trend-000-20260910",
+      "mutatedScenarioId": "bear_trend-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bear_trend-000-20260910",
+      "mutatedScenarioId": "bear_trend-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "bear_trend-000-20260910",
+      "mutatedScenarioId": "bear_trend-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.8166666666666667,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sideways-000-20260910",
+      "mutatedScenarioId": "sideways-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sideways-000-20260910",
+      "mutatedScenarioId": "sideways-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sideways-000-20260910",
+      "mutatedScenarioId": "sideways-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sideways-000-20260910",
+      "mutatedScenarioId": "sideways-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sideways-000-20260910",
+      "mutatedScenarioId": "sideways-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volatility_spike-000-20260910",
+      "mutatedScenarioId": "volatility_spike-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.03,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volatility_spike-000-20260910",
+      "mutatedScenarioId": "volatility_spike-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volatility_spike-000-20260910",
+      "mutatedScenarioId": "volatility_spike-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volatility_spike-000-20260910",
+      "mutatedScenarioId": "volatility_spike-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volatility_spike-000-20260910",
+      "mutatedScenarioId": "volatility_spike-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.075,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_drop-000-20260910",
+      "mutatedScenarioId": "sharp_price_drop-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.03,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_drop-000-20260910",
+      "mutatedScenarioId": "sharp_price_drop-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_drop-000-20260910",
+      "mutatedScenarioId": "sharp_price_drop-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_drop-000-20260910",
+      "mutatedScenarioId": "sharp_price_drop-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_drop-000-20260910",
+      "mutatedScenarioId": "sharp_price_drop-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.036666666666666674,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_increase-000-20260910",
+      "mutatedScenarioId": "sharp_price_increase-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_increase-000-20260910",
+      "mutatedScenarioId": "sharp_price_increase-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_increase-000-20260910",
+      "mutatedScenarioId": "sharp_price_increase-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_increase-000-20260910",
+      "mutatedScenarioId": "sharp_price_increase-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "sharp_price_increase-000-20260910",
+      "mutatedScenarioId": "sharp_price_increase-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.036666666666666674,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "momentum_reversal-000-20260910",
+      "mutatedScenarioId": "momentum_reversal-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "momentum_reversal-000-20260910",
+      "mutatedScenarioId": "momentum_reversal-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "momentum_reversal-000-20260910",
+      "mutatedScenarioId": "momentum_reversal-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "momentum_reversal-000-20260910",
+      "mutatedScenarioId": "momentum_reversal-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "momentum_reversal-000-20260910",
+      "mutatedScenarioId": "momentum_reversal-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.026666666666666672,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_spike-000-20260910",
+      "mutatedScenarioId": "volume_spike-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_spike-000-20260910",
+      "mutatedScenarioId": "volume_spike-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_spike-000-20260910",
+      "mutatedScenarioId": "volume_spike-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_spike-000-20260910",
+      "mutatedScenarioId": "volume_spike-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_spike-000-20260910",
+      "mutatedScenarioId": "volume_spike-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_collapse-000-20260910",
+      "mutatedScenarioId": "volume_collapse-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_collapse-000-20260910",
+      "mutatedScenarioId": "volume_collapse-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_collapse-000-20260910",
+      "mutatedScenarioId": "volume_collapse-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_collapse-000-20260910",
+      "mutatedScenarioId": "volume_collapse-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "volume_collapse-000-20260910",
+      "mutatedScenarioId": "volume_collapse-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakout-000-20260910",
+      "mutatedScenarioId": "breakout-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.03,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakout-000-20260910",
+      "mutatedScenarioId": "breakout-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakout-000-20260910",
+      "mutatedScenarioId": "breakout-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakout-000-20260910",
+      "mutatedScenarioId": "breakout-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakout-000-20260910",
+      "mutatedScenarioId": "breakout-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakdown-000-20260910",
+      "mutatedScenarioId": "breakdown-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakdown-000-20260910",
+      "mutatedScenarioId": "breakdown-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakdown-000-20260910",
+      "mutatedScenarioId": "breakdown-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakdown-000-20260910",
+      "mutatedScenarioId": "breakdown-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "breakdown-000-20260910",
+      "mutatedScenarioId": "breakdown-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_SHORT",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bearish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "overbought-000-20260910",
+      "mutatedScenarioId": "overbought-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "overbought-000-20260910",
+      "mutatedScenarioId": "overbought-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "overbought-000-20260910",
+      "mutatedScenarioId": "overbought-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "overbought-000-20260910",
+      "mutatedScenarioId": "overbought-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "overbought-000-20260910",
+      "mutatedScenarioId": "overbought-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "oversold-000-20260910",
+      "mutatedScenarioId": "oversold-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999992,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "oversold-000-20260910",
+      "mutatedScenarioId": "oversold-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "oversold-000-20260910",
+      "mutatedScenarioId": "oversold-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "oversold-000-20260910",
+      "mutatedScenarioId": "oversold-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "oversold-000-20260910",
+      "mutatedScenarioId": "oversold-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "conflicting_indicators-000-20260910",
+      "mutatedScenarioId": "conflicting_indicators-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.03,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "conflicting_indicators-000-20260910",
+      "mutatedScenarioId": "conflicting_indicators-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "conflicting_indicators-000-20260910",
+      "mutatedScenarioId": "conflicting_indicators-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "conflicting_indicators-000-20260910",
+      "mutatedScenarioId": "conflicting_indicators-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "conflicting_indicators-000-20260910",
+      "mutatedScenarioId": "conflicting_indicators-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.6,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "weak_trend-000-20260910",
+      "mutatedScenarioId": "weak_trend-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "weak_trend-000-20260910",
+      "mutatedScenarioId": "weak_trend-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "weak_trend-000-20260910",
+      "mutatedScenarioId": "weak_trend-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "weak_trend-000-20260910",
+      "mutatedScenarioId": "weak_trend-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "weak_trend-000-20260910",
+      "mutatedScenarioId": "weak_trend-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.48333333333333334,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "strong_trend-000-20260910",
+      "mutatedScenarioId": "strong_trend-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "strong_trend-000-20260910",
+      "mutatedScenarioId": "strong_trend-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "strong_trend-000-20260910",
+      "mutatedScenarioId": "strong_trend-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "strong_trend-000-20260910",
+      "mutatedScenarioId": "strong_trend-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "strong_trend-000-20260910",
+      "mutatedScenarioId": "strong_trend-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "mutatedDecision": {
+        "action": "OPEN_LONG",
+        "confidence": 0.9,
+        "reason": "Multiple independent signals converge bullish."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_long-000-20260910",
+      "mutatedScenarioId": "existing_long-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_long-000-20260910",
+      "mutatedScenarioId": "existing_long-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_long-000-20260910",
+      "mutatedScenarioId": "existing_long-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_long-000-20260910",
+      "mutatedScenarioId": "existing_long-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_long-000-20260910",
+      "mutatedScenarioId": "existing_long-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bullish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_short-000-20260910",
+      "mutatedScenarioId": "existing_short-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_short-000-20260910",
+      "mutatedScenarioId": "existing_short-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_short-000-20260910",
+      "mutatedScenarioId": "existing_short-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_short-000-20260910",
+      "mutatedScenarioId": "existing_short-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "existing_short-000-20260910",
+      "mutatedScenarioId": "existing_short-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.5666666666666667,
+        "reason": "Bearish thesis remains sufficiently intact."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "flat-000-20260910",
+      "mutatedScenarioId": "flat-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "flat-000-20260910",
+      "mutatedScenarioId": "flat-000-20260910-mut1-momentum",
+      "changedFields": [
+        "momentum"
+      ],
+      "magnitude": 0.049999999999999996,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "flat-000-20260910",
+      "mutatedScenarioId": "flat-000-20260910-mut2-rsi",
+      "changedFields": [
+        "rsi"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "flat-000-20260910",
+      "mutatedScenarioId": "flat-000-20260910-mut3-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "flat-000-20260910",
+      "mutatedScenarioId": "flat-000-20260910-mut4-volatilityPct",
+      "changedFields": [
+        "volatilityPct"
+      ],
+      "magnitude": 0.013333333333333336,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "data_missing_price-000-20260910",
+      "mutatedScenarioId": "data_missing_price-000-20260910-mut0-lastPrice",
+      "changedFields": [
+        "lastPrice"
+      ],
+      "magnitude": 0.029999999999999995,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    },
+    {
+      "originalScenarioId": "data_missing_price-000-20260910",
+      "mutatedScenarioId": "data_missing_price-000-20260910-mut1-orderBookImbalance",
+      "changedFields": [
+        "orderBookImbalance"
+      ],
+      "magnitude": 0.06666666666666667,
+      "originalDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "mutatedDecision": {
+        "action": "HOLD",
+        "confidence": 0.4,
+        "reason": "Insufficient convergence across signals."
+      },
+      "confidenceDifference": 0,
+      "decisionChanged": false,
+      "explainable": true,
+      "failureCategory": "none"
+    }
+  ],
+  "failures": [],
+  "replaySample": [
+    {
+      "scenario": {
+        "id": "bull_trend-000-20260910",
+        "regime": "bull_trend",
+        "description": "Sustained bullish trend: price above SMA20 above SMA50, positive momentum, RSI in bullish territory, order flow tilted to bid side.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83836.24347629026,
+          "previousPrice": 83417.0622589088,
+          "priceChangePct": 0.5025125628140739,
+          "momentum": 2.2,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 62,
+          "sma20": 82578.69982414591,
+          "sma50": 81321.15617200155,
+          "distanceFromSma20Pct": 1.5228426395939014,
+          "distanceFromSma50Pct": 3.092783505154643,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 81394.41114202938,
+              "high": 81665.23605839408,
+              "low": 81379.45839117163,
+              "close": 81643.88332639783,
+              "volume": 51.89803569111973
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 81643.88332639783,
+              "high": 81922.02107779797,
+              "low": 81627.76468841633,
+              "close": 81908.44284733318,
+              "volume": 68.23690041899681
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 81908.44284733318,
+              "high": 82281.02313546003,
+              "low": 81845.01995581051,
+              "close": 82247.40731596891,
+              "volume": 68.39604781009257
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 82247.40731596891,
+              "high": 82719.48008081809,
+              "low": 82190.17729217924,
+              "close": 82657.23447502582,
+              "volume": 62.903272677212954
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 82657.23447502582,
+              "high": 82926.13654927089,
+              "low": 82653.70288714995,
+              "close": 82864.21325729611,
+              "volume": 64.37286623753607
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 82864.21325729611,
+              "high": 83065.69316937414,
+              "low": 82848.93299295503,
+              "close": 83020.03249235392,
+              "volume": 53.00526418723166
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83020.03249235392,
+              "high": 83217.42722950758,
+              "low": 82959.24701237642,
+              "close": 83153.99225403028,
+              "volume": 51.368838478811085
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83153.99225403028,
+              "high": 83397.87761067336,
+              "low": 83132.25317370548,
+              "close": 83385.39294725412,
+              "volume": 69.068174357526
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83385.39294725412,
+              "high": 83720.4042864857,
+              "low": 83329.32879422346,
+              "close": 83715.00581726692,
+              "volume": 62.85025903489441
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83715.00581726692,
+              "high": 83894.86616058172,
+              "low": 83655.10298023968,
+              "close": 83836.24347629026,
+              "volume": 52.91413413360715
+            }
+          ],
+          "volume": 75,
+          "averageVolume": 60,
+          "volumeRatio": 1.25,
+          "bestBid": 83823.66803976882,
+          "bestAsk": 83848.8189128117,
+          "spreadPct": 0.03,
+          "bidVolume": 44.25,
+          "askVolume": 30.750000000000004,
+          "orderBookImbalance": 0.18,
+          "markPrice": 83841.92839940649,
+          "fundingRate": 0.0004,
+          "indexPrice": 83829.33907168174
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "bullish",
+        "highBurdenToClose": false,
+        "notes": [
+          "Price, SMA20, SMA50, momentum, RSI, and order-book imbalance all converge bullish."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.9,
+          "reason": "Multiple independent signals converge bullish."
+        }
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "sharp_price_drop-000-20260910",
+        "regime": "sharp_price_drop",
+        "description": "Sharp single-window price drop with elevated panic volume and negative order-book imbalance.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83718.53499292396,
+          "previousPrice": 86230.09104271168,
+          "priceChangePct": -2.9126213592232975,
+          "momentum": -3.5,
+          "volatilityPct": 2.2,
+          "atr": 150,
+          "rsi": 27,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": -0.335077389376238,
+          "distanceFromSma50Pct": -0.335077389376238,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 119597.90713274853,
+              "high": 119789.51989504645,
+              "low": 116428.57668566573,
+              "close": 116514.38261580789,
+              "volume": 63.54956050403416
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 116514.38261580789,
+              "high": 116747.13801949474,
+              "low": 112464.36132549,
+              "close": 112692.13216650722,
+              "volume": 53.19071353878826
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 112692.13216650722,
+              "high": 112747.55156596629,
+              "low": 108914.22995205366,
+              "close": 109121.37712115914,
+              "volume": 53.5508860880509
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 109121.37712115914,
+              "high": 109328.09548696934,
+              "low": 106242.60168208892,
+              "close": 106407.35883571344,
+              "volume": 51.33535398636013
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 106407.35883571344,
+              "high": 106483.74446052255,
+              "low": 103036.46021477092,
+              "close": 103242.7504550817,
+              "volume": 57.13423854671419
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 103242.7504550817,
+              "high": 103395.04728043597,
+              "low": 99752.3025577495,
+              "close": 99972.78251616129,
+              "volume": 68.22795287240297
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 99972.78251616129,
+              "high": 100072.56408751328,
+              "low": 97181.25245628411,
+              "close": 97258.91031831605,
+              "volume": 57.59549139533192
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 97258.91031831605,
+              "high": 97460.13717903719,
+              "low": 93694.64796729617,
+              "close": 93916.52097336533,
+              "volume": 65.15650742221624
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 93916.52097336533,
+              "high": 94030.37420750243,
+              "low": 91338.77951840394,
+              "close": 91510.8247107661,
+              "volume": 66.50441505014896
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 91510.8247107661,
+              "high": 91703.7918678345,
+              "low": 88768.06621295927,
+              "close": 83718.53499292396,
+              "volume": 65.6768050417304
+            }
+          ],
+          "volume": 160,
+          "averageVolume": 60,
+          "volumeRatio": 2.6666666666666665,
+          "bestBid": 83705.97721267502,
+          "bestAsk": 83731.0927731729,
+          "spreadPct": 0.03,
+          "bidVolume": 56,
+          "askVolume": 104,
+          "orderBookImbalance": -0.3,
+          "markPrice": 83704.57243557944,
+          "fundingRate": 0.0001,
+          "indexPrice": 83711.19635690564
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "A sharp single-window move - the system prompt explicitly warns against overreacting to one candle, so both HOLD and a well-justified OPEN_SHORT are acceptable; only a contradictory OPEN_LONG is graded as a conflict."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0.6,
+          "reason": "Insufficient convergence across signals."
+        }
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "volume_collapse-000-20260910",
+        "regime": "volume_collapse",
+        "description": "Volume collapse (volumeRatio well below 1) - thin, low-conviction trading.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84090.45360376126,
+          "previousPrice": 84037.47046589977,
+          "priceChangePct": 0.0630470402878083,
+          "momentum": 0,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 50,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": 0.10768286162054297,
+          "distanceFromSma50Pct": 0.10768286162054297,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 84090.45360376126,
+              "high": 84306.71438006058,
+              "low": 84001.47461209184,
+              "close": 84255.16388008127,
+              "volume": 59.403774994425476
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 84255.16388008127,
+              "high": 84421.74562131827,
+              "low": 84194.12709964112,
+              "close": 84337.16032696256,
+              "volume": 51.617430513724685
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 84337.16032696256,
+              "high": 84435.3746276569,
+              "low": 84234.06865169773,
+              "close": 84314.30303104395,
+              "volume": 53.525673830881715
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 84314.30303104395,
+              "high": 84316.60812831586,
+              "low": 84150.19187804875,
+              "close": 84166.87246486754,
+              "volume": 54.776643654331565
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 84166.87246486754,
+              "high": 84458.14187203535,
+              "low": 84132.03782674938,
+              "close": 84359.66028651148,
+              "volume": 66.92877893336117
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 84359.66028651148,
+              "high": 84452.81606456135,
+              "low": 84118.85474814581,
+              "close": 84179.63128589287,
+              "volume": 58.006059089675546
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 84179.63128589287,
+              "high": 84374.3171443032,
+              "low": 84171.85729399948,
+              "close": 84366.7846021446,
+              "volume": 53.83951919153333
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84366.7846021446,
+              "high": 84409.8548569026,
+              "low": 84187.02225127259,
+              "close": 84208.87769136683,
+              "volume": 56.49605723563582
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84208.87769136683,
+              "high": 84433.96549551758,
+              "low": 84135.16037181542,
+              "close": 84396.80193232074,
+              "volume": 58.89998785685748
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 84396.80193232074,
+              "high": 84431.55666697091,
+              "low": 84326.17157745722,
+              "close": 84090.45360376126,
+              "volume": 58.495916216634214
+            }
+          ],
+          "volume": 15,
+          "averageVolume": 60,
+          "volumeRatio": 0.25,
+          "bestBid": 84077.84003572068,
+          "bestAsk": 84103.06717180183,
+          "spreadPct": 0.03,
+          "bidVolume": 7.5,
+          "askVolume": 7.5,
+          "orderBookImbalance": 0,
+          "markPrice": 84081.58938677587,
+          "fundingRate": 0.0001,
+          "indexPrice": 84099.98778440262
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Thin volume is a reason for caution, not a directional signal."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0.4,
+          "reason": "Insufficient convergence across signals."
+        }
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "oversold-000-20260910",
+        "regime": "oversold",
+        "description": "RSI deep in oversold territory in isolation, without independent confirming signals.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83651.30994913168,
+          "previousPrice": 84069.56649887734,
+          "priceChangePct": -0.4975124378109384,
+          "momentum": -1.2,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 18,
+          "sma20": 84487.823048623,
+          "sma50": 84000,
+          "distanceFromSma20Pct": -0.9900990099009935,
+          "distanceFromSma50Pct": -0.4151072034146637,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 87136.78119701217,
+              "high": 87193.80809009964,
+              "low": 86940.57403950863,
+              "close": 86944.27079986404,
+              "volume": 50.2665213868022
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 86944.27079986404,
+              "high": 87036.66412020786,
+              "low": 86533.40837060276,
+              "close": 86577.04437685348,
+              "volume": 68.4428578056395
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 86577.04437685348,
+              "high": 86655.36226076016,
+              "low": 85993.31951563366,
+              "close": 86089.27992424171,
+              "volume": 50.61845801305026
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 86089.27992424171,
+              "high": 86189.06954286348,
+              "low": 85487.26402492986,
+              "close": 85554.40194497755,
+              "volume": 60.63925019465387
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 85554.40194497755,
+              "high": 85628.13267908341,
+              "low": 85337.51950442106,
+              "close": 85363.23783577247,
+              "volume": 57.552205701358616
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 85363.23783577247,
+              "high": 85419.04533656809,
+              "low": 84771.06661446686,
+              "close": 84792.25965469709,
+              "volume": 53.973225774243474
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 84792.25965469709,
+              "high": 84802.12025042338,
+              "low": 84643.81202842887,
+              "close": 84667.06234982972,
+              "volume": 54.72693127114326
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84667.06234982972,
+              "high": 84708.28615108693,
+              "low": 84339.00966064025,
+              "close": 84424.94239176053,
+              "volume": 54.927787757478654
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84424.94239176053,
+              "high": 84451.64540797782,
+              "low": 84286.26649935413,
+              "close": 84326.94217710217,
+              "volume": 64.0974437771365
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 84326.94217710217,
+              "high": 84355.16661265091,
+              "low": 84096.27966179779,
+              "close": 83651.30994913168,
+              "volume": 50.71565430611372
+            }
+          ],
+          "volume": 60,
+          "averageVolume": 60,
+          "volumeRatio": 1,
+          "bestBid": 83638.76225263931,
+          "bestAsk": 83663.85764562406,
+          "spreadPct": 0.03,
+          "bidVolume": 30,
+          "askVolume": 30,
+          "orderBookImbalance": 0,
+          "markPrice": 83651.59364716634,
+          "fundingRate": 0.0001,
+          "indexPrice": 83662.09038080367
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Mirror of overbought - not strictly graded."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0.6,
+          "reason": "Insufficient convergence across signals."
+        }
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "existing_long-000-20260910",
+        "regime": "existing_long",
+        "description": "Existing LONG position experiencing an ordinary small adverse wiggle - original thesis is not materially challenged.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83779.99640983802,
+          "previousPrice": 83863.77640624784,
+          "priceChangePct": -0.0999000999000821,
+          "momentum": -0.3,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 47,
+          "sma20": 84368.81164565012,
+          "sma50": 84957.62688146225,
+          "distanceFromSma20Pct": -0.6979062811565139,
+          "distanceFromSma50Pct": -1.3861386138613876,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 84626.25899983638,
+              "high": 84703.71404252414,
+              "low": 84464.68319212436,
+              "close": 84534.51797185518,
+              "volume": 67.83623655792326
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 84534.51797185518,
+              "high": 84538.89909989011,
+              "low": 84175.16611979193,
+              "close": 84248.69770004915,
+              "volume": 60.415451559238136
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 84248.69770004915,
+              "high": 84388.23662307304,
+              "low": 84176.71676591843,
+              "close": 84291.74152347236,
+              "volume": 67.30806249659508
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 84291.74152347236,
+              "high": 84295.10274045698,
+              "low": 84105.20213225641,
+              "close": 84165.98074754592,
+              "volume": 64.61229507345706
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 84165.98074754592,
+              "high": 84234.09237278813,
+              "low": 83927.03667283554,
+              "close": 83931.89914218981,
+              "volume": 54.26678884308785
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83931.89914218981,
+              "high": 84012.28921320834,
+              "low": 83751.18585032286,
+              "close": 83793.06021027375,
+              "volume": 50.882548526860774
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83793.06021027375,
+              "high": 83978.44311480936,
+              "low": 83743.07804162778,
+              "close": 83927.70406065855,
+              "volume": 53.6526001105085
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83927.70406065855,
+              "high": 83978.93697369247,
+              "low": 83828.1917445553,
+              "close": 83888.92398004593,
+              "volume": 68.90057273209095
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83888.92398004593,
+              "high": 83923.67643726723,
+              "low": 83884.75087597671,
+              "close": 83914.13748021795,
+              "volume": 51.92207407206297
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83914.13748021795,
+              "high": 83992.21825921308,
+              "low": 83587.30727966546,
+              "close": 83779.99640983802,
+              "volume": 64.29785065818578
+            }
+          ],
+          "volume": 62,
+          "averageVolume": 60,
+          "volumeRatio": 1.0333333333333334,
+          "bestBid": 83767.42941037654,
+          "bestAsk": 83792.56340929949,
+          "spreadPct": 0.03,
+          "bidVolume": 29.45,
+          "askVolume": 32.550000000000004,
+          "orderBookImbalance": -0.05,
+          "markPrice": 83775.38347676181,
+          "fundingRate": 0.0001,
+          "indexPrice": 83784.64483623761
+        },
+        "position": {
+          "available": true,
+          "side": "LONG",
+          "entryPrice": 84116.46225887351,
+          "quantity": 0.0003,
+          "leverage": 3,
+          "unrealizedPnl": -0.10093975471064767,
+          "liquidationPrice": 58881.52358121145,
+          "margin": 8.41164622588735,
+          "positionId": "synthetic-long",
+          "raw": {
+            "synthetic": true
+          },
+          "error": null
+        },
+        "expectedBias": "bullish",
+        "highBurdenToClose": true,
+        "notes": [
+          "Graded strictly: closing here (CLOSE_LONG) on this little noise is an evidence conflict per the system prompt's own 'do not close on ordinary noise' rule.",
+          "position.liquidationPrice on this scenario is synthetic test-data math (see approxLiquidationPrice in this file), NOT Bitget's real liquidation formula."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0.5666666666666667,
+          "reason": "Bullish thesis remains sufficiently intact."
+        }
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    }
+  ]
+}

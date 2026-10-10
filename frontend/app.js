@@ -40,19 +40,27 @@ const FAILURE_CATEGORY_LABELS = {
   timeout_or_provider_failure: "Timeout / provider failure",
 };
 
-
+/* ---------------- Data loading ---------------- */
 
 async function loadData() {
-  const [report, baseline, meta, real] = await Promise.all([
+  const [report, baseline, meta, real, realFutures, futuresCrashTests, futuresRuns] = await Promise.all([
     fetch("data/report.json").then(r => r.json()),
     fetch("data/baseline_report.json").then(r => r.json()),
     fetch("data/meta.json").then(r => r.json()),
     fetch("data/real_trading.json").then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch("data/real_futures_trading.json").then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch("data/futures_crashtest.json").then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch("data/runs/index.json").then(r => r.ok ? r.json() : null).catch(() => null),
   ]);
   state.reports.report = report;
   state.reports.baseline_report = baseline;
   state.meta = meta;
   state.real = real;
+  state.realFutures = realFutures;
+  state.futuresCrashTests = futuresCrashTests;
+  state.futuresRuns = futuresRuns;
+  state.spotRuns = await fetch("data/runs/spot-index.json").then(r => r.ok ? r.json() : null).catch(() => null);
+  state.futuresView = null; // a report picked from history; null = the default report above
 }
 
 function current() { return state.reports[state.activeAgentKey]; }
@@ -93,6 +101,7 @@ function wireLlmDetailToggles(container) {
   });
 }
 
+/* ---------------- Navigation ---------------- */
 
 function switchPage(page) {
   state.activePage = page;
@@ -112,14 +121,27 @@ function goToReplay(scenarioId) {
   switchPage("failure-replay");
 }
 
+/* ---------------- Top status ---------------- */
 
 function renderTopStatus() {
   const dot = document.getElementById("status-dot");
   const val = document.getElementById("status-value");
   dot.className = "dot";
   val.textContent = "Operational";
+  let banner = document.getElementById("spot-view-banner");
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "spot-view-banner";
+    banner.style.cssText = "background:var(--warn-bg);color:var(--warn);font-size:12px;padding:6px 14px;text-align:center;";
+    document.body.prepend(banner);
+  }
+  if (state.spotView) {
+    banner.innerHTML = `Spot pages are showing a STORED RUN from ${escHtml(state.spotView.generatedAt.replace("T"," ").slice(0,16))} (not the latest). <a href="#" onclick="selectSpotRun(null);return false;">Back to latest</a>`;
+    banner.style.display = "block";
+  } else banner.style.display = "none";
 }
 
+/* ================= OVERVIEW PAGE ================= */
 
 function renderOverviewPage() {
   const r = state.reports.report.summary;
@@ -137,13 +159,13 @@ function renderOverviewPage() {
         <div class="stat-cell"><div class="stat-label">Scenarios</div><div class="stat-value">${fmtNum(r.total_tests)}</div></div>
         <div class="stat-cell"><div class="stat-label">Passed</div><div class="stat-value pass">${fmtNum(r.passed)}</div></div>
         <div class="stat-cell"><div class="stat-label">Failed</div><div class="stat-value fail">${fmtNum(r.failed)}</div></div>
-        <div class="stat-cell"><div class="stat-label">Reliability</div><div class="stat-value ${cls}">${r.scores.reliability.toFixed(1)}%</div></div>
+        <div class="stat-cell"><div class="stat-label" title="Composite score: mean of consistency, risk discipline, stress performance and execution discipline. Not the pass rate.">Reliability score (composite)</div><div class="stat-value ${cls}">${r.scores.reliability.toFixed(1)}%</div></div>
       </div>
       <div class="section-gap">${passFailBar(r.passed, r.failed)}</div>
       <div class="stat-row cols-3 section-gap">
         <div class="stat-cell"><div class="stat-label">Risk violations</div><div class="stat-value fail">${fmtNum(r.risk_violations)}</div></div>
         <div class="stat-cell"><div class="stat-label">Inconsistencies</div><div class="stat-value fail">${fmtNum(r.decision_inconsistencies)}</div></div>
-        <div class="stat-cell"><div class="stat-label">Baseline comparison</div><div class="stat-value">${r.scores.reliability.toFixed(1)} <span style="color:var(--muted);font-size:11px;">vs</span> ${state.reports.baseline_report.summary.scores.reliability.toFixed(1)}</div></div>
+        <div class="stat-cell"><div class="stat-label">Reliability score vs baseline</div><div class="stat-value">${r.scores.reliability.toFixed(1)} <span style="color:var(--muted);font-size:11px;">vs</span> ${state.reports.baseline_report.summary.scores.reliability.toFixed(1)}</div></div>
       </div>
     </div>
 
@@ -298,7 +320,48 @@ function wireGotoPage(container) {
 
 /* ================= CRASH TESTS PAGE ================= */
 
+/* Swap the Spot specimen+baseline reports for a stored run (verbatim files) and re-render. */
+async function selectSpotRun(runId) {
+  if (!state.spotLatest) state.spotLatest = { report: state.reports.report, baseline_report: state.reports.baseline_report };
+  if (runId === null) {
+    state.reports.report = state.spotLatest.report; state.reports.baseline_report = state.spotLatest.baseline_report;
+    state.spotView = null;
+  } else {
+    const spec = state.spotRuns.find(e => e.runId === runId);
+    const base = state.spotRuns.find(e => e.role === "baseline" && e.generatedAt === spec.generatedAt);
+    if (!spec || !spec.file || !base || !base.file) { alert("This run has no stored full report."); return; }
+    try {
+      const [a, b] = await Promise.all([spec.file, base.file].map(f => fetch(`data/runs/${encodeURIComponent(f)}`).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status} for ${f}`); return r.json(); })));
+      state.reports.report = a; state.reports.baseline_report = b; state.spotView = spec;
+    } catch (e) { alert(`Could not load stored run: ${e.message}`); return; }
+  }
+  state.activeCategory = null; state.activeFilter = "all";
+  renderAll();
+}
+
+function renderSpotHistory() {
+  const el = document.getElementById("ct-history");
+  const runs = state.spotRuns;
+  if (!runs || !runs.length) { el.innerHTML = `<div class="panel-title" style="font-size:12.5px;">Run history (Spot)</div><div class="hint-empty section-gap">No Spot run history yet. Run <code>python3 backend/main.py</code> or <code>python3 backend/history.py --import</code>.</div>`; return; }
+  const kindLabel = { simulated_specimen: "SIMULATED SPECIMEN", deterministic: "DETERMINISTIC BASELINE", llm: "LLM" };
+  el.innerHTML = `
+    <div class="panel-title" style="font-size:12.5px;">Run history (Spot)</div>
+    <div class="foot-note">One row per stored run; every run's full report is kept, so "view" reopens it with all scenarios (the dashboard's Spot pages then show that run until you go back). Simulated specimen, deterministic baseline and LLM rows are different things and are never averaged.</div>
+    ${state.spotView ? `<div class="foot-note"><strong>Viewing a stored run from ${escHtml(state.spotView.generatedAt.replace("T"," ").slice(0,16))}.</strong> <a href="#" onclick="selectSpotRun(null);return false;">Back to the latest report</a></div>` : ""}
+    <div class="table-scroll section-gap"><table class="dtable"><thead><tr><th>When</th><th>Type</th><th>Agent / model</th><th>Passed (raw)</th><th>Risk violations</th><th>Inconsistencies</th><th>Provider failures</th><th>Reliability score (composite)</th><th></th></tr></thead>
+    <tbody>${runs.map(e => `<tr>
+      <td style="font-family:var(--mono);font-size:10.5px;">${escHtml(e.generatedAt.replace("T"," ").slice(0,16))}</td>
+      <td><span class="badge ${e.kind === "llm" ? "neutral" : "dim"}">${kindLabel[e.kind] || escHtml(e.kind)}</span>${e.imported ? ` <span class="badge dim" title="${escHtml(e.imported.note)}">IMPORTED</span>` : ""}</td>
+      <td>${escHtml(e.agent)}${e.model ? `<br><span style="color:var(--muted);font-size:10px;">${escHtml(e.provider || "")} ${escHtml(e.model)}</span>` : ""}</td>
+      <td>${e.passed}/${e.scenarios}</td><td>${e.riskViolations}</td><td>${e.decisionInconsistencies}</td>
+      <td class="${e.providerFailures>0?"fail":""}">${e.providerFailures}</td>
+      <td>${fmtPctNA(e.scores && e.scores.reliability !== undefined ? e.scores.reliability : null)}</td>
+      <td>${e.role !== "specimen" ? "" : (state.spotView && state.spotView.runId === e.runId) ? `<span style="color:var(--muted);">viewing</span>` : e.file ? `<a href="#" onclick="selectSpotRun('${escHtml(e.runId)}');return false;">view</a>` : ""}</td></tr>`).join("")}
+    </tbody></table></div>`;
+}
+
 function renderCrashTestsPage() {
+  renderSpotHistory();
   const r = state.reports.report.summary;
   const baseline = state.reports.baseline_report.summary;
 
@@ -309,10 +372,10 @@ function renderCrashTestsPage() {
       <div class="stat-cell"><div class="stat-label">Scenarios</div><div class="stat-value">${fmtNum(r.total_tests)}</div></div>
       <div class="stat-cell"><div class="stat-label">Passed</div><div class="stat-value pass">${fmtNum(r.passed)} (${(r.passed/r.total_tests*100).toFixed(1)}%)</div></div>
       <div class="stat-cell"><div class="stat-label">Failed</div><div class="stat-value fail">${fmtNum(r.failed)} (${(r.failed/r.total_tests*100).toFixed(1)}%)</div></div>
-      <div class="stat-cell"><div class="stat-label">Reliability</div><div class="stat-value ${scoreClass(r.scores.reliability)}">${r.scores.reliability.toFixed(1)}%</div></div>
+      <div class="stat-cell"><div class="stat-label" title="Composite score: mean of consistency, risk discipline, stress performance and execution discipline. Not the pass rate.">Reliability score (composite)</div><div class="stat-value ${scoreClass(r.scores.reliability)}">${r.scores.reliability.toFixed(1)}%</div></div>
       <div class="stat-cell"><div class="stat-label">Risk violations</div><div class="stat-value fail">${fmtNum(r.risk_violations)}</div></div>
       <div class="stat-cell"><div class="stat-label">Inconsistencies</div><div class="stat-value fail">${fmtNum(r.decision_inconsistencies)}</div></div>
-      <div class="stat-cell"><div class="stat-label">Baseline comparison</div><div class="stat-value">${r.scores.reliability.toFixed(1)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Reliability score vs baseline</div><div class="stat-value">${r.scores.reliability.toFixed(1)} <span style="color:var(--muted);font-size:11px;">vs</span> ${baseline.scores.reliability.toFixed(1)}</div></div>
     </div>
   `;
 
@@ -374,7 +437,7 @@ function categoryCounts() {
   return counts;
 }
 
-/* The killer feature: same numbers, five wordings, does the decision change. */
+
 function renderConsistencySpotlight() {
   const el = document.getElementById("ct-consistency");
   const groups = {};
@@ -670,6 +733,317 @@ function renderPaperTradingPage() {
   wireLlmDetailToggles(el);
 }
 
+/* ================= PAPER TRADING (FUTURES) ================= */
+function renderFuturesPaperTradingPage() {
+  const el = document.getElementById("futures-paper-trading-content");
+  const real = state.realFutures && state.realFutures.report;
+
+  if (!real) {
+    el.innerHTML = `<div class="hint-empty">No real futures trading data available yet. Run <code>npm run paper:futures</code>, compute metrics with <code>real_metrics/compute_futures_metrics.py</code>, and re-export via <code>polygraph_ingestion.export_for_dashboard</code>.
+      ${state.realFutures && state.realFutures.unavailable_reason ? `<br><br><span style="font-family:var(--mono);font-size:10.5px;">${state.realFutures.unavailable_reason}</span>` : ""}</div>`;
+    return;
+  }
+
+  const m = real.metrics, trades = real.completed_trades, openPos = real.open_position;
+
+  el.innerHTML = `
+    <span class="provenance-pill real">BITGET DEMO / REAL FUTURES EXECUTION EVIDENCE (APPROXIMATE P&amp;L)</span>
+    <div class="panel-title">Bitget Demo Futures Paper Trading</div>
+    <div class="panel-desc">BTCUSDT USDT-margined &middot; Demo environment &middot; ${m.trade_count} completed trade${m.trade_count===1?'':'s'}</div>
+    <div class="foot-note">${m.pnl_methodology_note || ''}</div>
+
+    <div class="stat-row cols-4 section-gap">
+      <div class="stat-cell"><div class="stat-label">Completed trades</div><div class="stat-value">${m.trade_count}</div></div>
+      <div class="stat-cell"><div class="stat-label">Approx. net P&amp;L</div>${m.cumulative_approx_pnl_usdt!==null?`<div class="stat-value ${m.cumulative_approx_pnl_usdt>=0?'pass':'fail'}">${fmtMoney(m.cumulative_approx_pnl_usdt)}</div>`:`<div class="stat-value na">INSUFFICIENT SAMPLE</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Win rate</div>${m.win_rate_pct!==null?`<div class="stat-value">${m.win_rate_pct.toFixed(1)}%</div>`:`<div class="stat-value na">INSUFFICIENT SAMPLE</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Current position</div><div class="stat-value ${openPos?'pass':''}">${openPos?openPos.side:'FLAT'}</div></div>
+    </div>
+    <div class="stat-row cols-4 section-gap">
+      <div class="stat-cell"><div class="stat-label">Approx. max drawdown</div>${m.max_drawdown_approx_usdt!==undefined && m.max_drawdown_approx_usdt!==null?`<div class="stat-value fail">${fmtMoney(-Math.abs(m.max_drawdown_approx_usdt))}</div>`:`<div class="stat-value na">N/A</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Sharpe ratio</div>${m.sharpe_ratio!==null?`<div class="stat-value">${m.sharpe_ratio}</div>`:`<div class="stat-value na">NOT COMPUTED</div>`}</div>
+      <div class="stat-cell"><div class="stat-label">Leverage cap</div><div class="stat-value">${trades.length ? trades[0].leverage+'x' : (openPos&&openPos.leverage ? openPos.leverage+'x' : 'N/A')}</div></div>
+      <div class="stat-cell"><div class="stat-label">Sample size</div><div class="stat-value ${m.trade_count>=30?'pass':'warn'}">n = ${m.trade_count}</div></div>
+    </div>
+    ${m.sample_size_warning ? `<div class="foot-note section-gap">${m.sample_size_warning}</div>` : ""}
+    ${m.trades_with_missing_pnl ? `<div class="foot-note">${m.trades_with_missing_pnl} trade(s) excluded above - PnL data missing on the closing log line.</div>` : ""}
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Equity curve (approximate)</div>
+      ${m.equity_curve && m.equity_curve.length >= 2 ? `<div class="section-gap">${renderEquitySVG(m.equity_curve.map(p => ({cumulative_pnl_usdt: p.cumulative_approx_pnl_usdt})))}</div>` :
+        `<div class="hint-empty section-gap">Insufficient sample for an equity curve &mdash; ${m.trade_count} completed trade${m.trade_count===1?'':'s'} recorded. At least 2 are needed.</div>`}
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Trade history</div>
+      <div class="table-scroll section-gap">
+        <table class="dtable"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Leverage</th><th>Entry Px</th><th>Approx. Exit Px</th><th>Entry Decision</th><th>Exit Decision</th><th>Approx. P&amp;L</th></tr></thead>
+        <tbody>${trades.length ? trades.map((t, i) => `
+          <tr>
+            <td>${shortTs(t.exit_time)}</td>
+            <td>BTCUSDT</td>
+            <td><span class="badge ${t.side==='LONG'?'pass':'fail'}">${t.side}</span></td>
+            <td>${t.qty_base}</td>
+            <td>${t.leverage!==null?t.leverage+'x':'N/A'}</td>
+            <td>${t.entry_price}</td>
+            <td>${t.approx_exit_price!==null?t.approx_exit_price+' (approx.)':'N/A'}</td>
+            <td>${provenanceBadge(t.entry_decision_source)}${llmDetailToggle(`fut-entry-${i}`, t.entry_llm_reason, t.entry_llm_confidence)}</td>
+            <td>${provenanceBadge(t.exit_decision_source)}${llmDetailToggle(`fut-exit-${i}`, t.exit_llm_reason, t.exit_llm_confidence)}</td>
+            <td class="${t.approx_realized_pnl_usdt===null?'':(t.approx_realized_pnl_usdt>=0?'pass':'fail')}" style="${t.approx_realized_pnl_usdt===null?'color:var(--warn)':''}">${t.approx_realized_pnl_usdt!==null?fmtMoney(t.approx_realized_pnl_usdt):'Missing'}</td>
+          </tr>`).join("") : `<tr><td colspan="10" style="text-align:center;color:var(--muted);font-family:var(--sans);">No completed trades yet</td></tr>`}
+        </tbody></table>
+      </div>
+    </div>
+
+    ${openPos ? `<div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Open position</div>
+      <div class="kv-grid section-gap">
+        <div class="kv"><div class="k">Side</div><div class="v">${openPos.side}</div></div>
+        <div class="kv"><div class="k">Entry time</div><div class="v">${openPos.entry_time}</div></div>
+        <div class="kv"><div class="k">Entry price</div><div class="v">${openPos.entry_price}</div></div>
+        <div class="kv"><div class="k">Quantity</div><div class="v">${openPos.qty_base} BTC</div></div>
+        <div class="kv"><div class="k">Leverage</div><div class="v">${openPos.leverage!==null?openPos.leverage+'x':'N/A'}</div></div>
+      </div>
+      <div class="foot-note">Not counted in win rate, P&amp;L, or Sharpe above until closed.</div>
+    </div>` : ""}
+  `;
+  wireLlmDetailToggles(el);
+}
+
+/* ================= CRASH TESTS (FUTURES / POLYGRAPH) ================= */
+const FUTURES_FAILURE_LABELS = {
+  risk_violation: "Risk violation",
+  decision_inconsistency: "Decision inconsistency",
+  invalid_action: "Invalid action",
+  unsafe_reversal: "Unsafe reversal",
+  malformed_decision: "Malformed decision",
+  evidence_conflict: "Evidence conflict",
+  agent_error: "Provider error",
+};
+
+const PROVIDER_ERROR_LABELS = {
+  network: "Network / DNS failure",
+  timeout: "Timeout",
+  rate_limited: "HTTP 429 rate limit",
+  quota_exhausted: "HTTP 429 quota exhausted",
+  auth: "Authentication / key",
+  provider_http_error: "Provider HTTP error",
+  malformed_response: "Malformed provider response",
+  config_error: "Configuration error",
+  unknown: "Unclassified error",
+};
+
+const RUN_KIND_LABELS = { deterministic: "DETERMINISTIC", adversarial: "ADVERSARIAL", llm: "LLM" };
+
+function escHtml(v) {
+  return String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+
+function fmtPctNA(v) { return v === null || v === undefined ? "n/a" : `${v}%`; }
+
+function futuresRunInfo(r) {
+  if (r.run) return { kind: r.run.kind, provider: r.run.provider, model: r.run.model, inferred: false };
+  // Imported legacy file: the history index recorded what could be inferred (and says which fields).
+  const entry = (state.futuresRuns || []).find(e => e.runId === r.runId);
+  if (entry && entry.imported) {
+    return { kind: entry.kind, provider: entry.provider, model: entry.model, inferred: true,
+             inferredFields: entry.imported.inferred, byKind: entry.providerErrorsByKind };
+  }
+  const name = r.agent || "";
+  const kind = /LLM/i.test(name) ? "llm" : /Rule-Based/i.test(name) ? "deterministic"
+    : /Fixed-Action|Malformed|adversarial/i.test(name) ? "adversarial" : null;
+  return { kind, provider: null, model: null, inferred: true };
+}
+
+function futuresProviderErrorCounts(r) {
+  const s = r.scorecard;
+  if (s.providerErrorsByKind) return s.providerErrorsByKind;
+  const info = futuresRunInfo(r);
+  if (info.byKind && Object.keys(info.byKind).length) return info.byKind;
+  return null; // legacy report: breakdown unknown, only the flat count exists
+}
+
+async function selectFuturesRun(file) {
+  if (!file) { state.futuresView = null; renderFuturesCrashTestsPage(); return; }
+  try {
+    const res = await fetch(`data/runs/${encodeURIComponent(file)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    state.futuresView = { file, report: await res.json() };
+  } catch (e) {
+    alert(`Could not load run file ${file}: ${e.message}`);
+    return;
+  }
+  renderFuturesCrashTestsPage();
+}
+
+function renderFuturesHistory(activeRunId) {
+  const runs = state.futuresRuns;
+  if (!runs || runs.length === 0) {
+    return `<div class="hint-empty section-gap">No run history yet. Runs started with <code>--out</code> (or <code>--history-dir</code>) are stored in <code>data/runs/</code>; existing reports can be imported with <code>import-history</code>.</div>`;
+  }
+  return `<div class="table-scroll section-gap">
+    <table class="dtable"><thead><tr><th>When</th><th>Type</th><th>Agent / model</th><th>Scenarios</th><th>Passed</th><th>Provider errors</th><th>Reliability</th><th>Status</th><th></th></tr></thead>
+    <tbody>${runs.map(e => `
+      <tr>
+        <td style="font-family:var(--mono);font-size:10.5px;">${escHtml(e.generatedAt.replace("T", " ").slice(0, 16))}</td>
+        <td><span class="badge ${e.kind === "llm" ? "neutral" : "dim"}">${RUN_KIND_LABELS[e.kind] || escHtml(e.kind)}</span></td>
+        <td>${escHtml(e.agent)}${e.model ? `<br><span style="color:var(--muted);font-size:10px;">${escHtml(e.provider || "")} ${escHtml(e.model)}</span>` : ""}</td>
+        <td>${e.scenarios}</td>
+        <td>${e.passed}/${e.answeredScenarios}</td>
+        <td class="${e.agentErrors > 0 ? "fail" : ""}">${e.agentErrors}</td>
+        <td>${fmtPctNA(e.decisionReliabilityPct)}</td>
+        <td>${e.validity === "valid" ? `<span class="badge pass">VALID</span>` : `<span class="badge warn">INVALID &mdash; PROVIDER FAILURES</span>`}${e.imported ? ` <span class="badge dim" title="${escHtml(e.imported.note)}">IMPORTED</span>` : ""}</td>
+        <td>${e.runId === activeRunId ? `<span style="color:var(--muted);">viewing</span>` : `<a href="#" onclick="selectFuturesRun('${escHtml(e.file)}');return false;">view</a>`}</td>
+      </tr>`).join("")}
+    </tbody></table></div>`;
+}
+
+function renderFuturesCrashTestsPage() {
+  const el = document.getElementById("futures-crash-tests-content");
+  const r = state.futuresView ? state.futuresView.report : state.futuresCrashTests;
+
+  if (!r) {
+    el.innerHTML = `<div class="hint-empty">No futures crash-test report available yet. From <code>agent/</code>, run:<br><br>
+      <code>npm run polygraph -- --out=../frontend/data/futures_crashtest.json</code><br><br>
+      then reload this dashboard.</div>`;
+    return;
+  }
+
+  const s = r.scorecard;
+  const info = futuresRunInfo(r);
+  const invalid = s.validity === "invalid_provider_failures";
+  const agentErrors = s.agentErrors || 0;
+  const answered = s.answeredScenarios ?? s.scenarios;
+  const mutChanged = r.mutationResults.filter(m => m.decisionChanged).length;
+  const mutFlagged = r.mutationResults.filter(m => m.failureCategory === "decision_inconsistency").length;
+  const providerFailures = r.failures.filter(f => f.failure.category === "agent_error");
+  const agentFailures = r.failures.filter(f => f.failure.category !== "agent_error");
+  const errsByRegime = {};
+  providerFailures.forEach(f => { errsByRegime[f.scenario.regime] = (errsByRegime[f.scenario.regime] || 0) + 1; });
+  const byKind = futuresProviderErrorCounts(r);
+
+  const kindBadge = info.kind
+    ? `<span class="badge ${info.kind === "llm" ? "neutral" : "dim"}">${RUN_KIND_LABELS[info.kind]}${info.inferred ? " (inferred)" : ""}</span>`
+    : `<span class="badge warn">UNKNOWN RUN TYPE</span>`;
+
+  el.innerHTML = `
+    <span class="provenance-pill synthetic">SYNTHETIC / SIMULATED EVALUATION &mdash; NO REAL BITGET ORDERS PLACED</span>
+    <div class="panel-title">Agent Polygraph &mdash; Futures Crash Test ${kindBadge}</div>
+    <div class="panel-desc">Agent: ${escHtml(r.agent)}${info.model ? ` &middot; Model: ${escHtml(info.provider || "?")} / ${escHtml(info.model)}${info.inferred ? " (taken from the provider's own error text; the original report did not record it)" : ""}` : ""} &middot; Seed: ${escHtml(r.seed)} &middot; Generated: ${escHtml(r.generatedAt)} &middot; ${s.scenarios} scenarios across ${r.regimeResults.length} market regimes</div>
+    ${info.kind === "deterministic" ? `<div class="foot-note">Deterministic rule-based run: this is NOT an LLM result and says nothing about how an LLM agent behaves.</div>` : ""}
+    ${info.kind === "adversarial" ? `<div class="foot-note">Adversarial scripted agent: it exists to prove the risk engine catches violations. It is not a trading strategy or an LLM result.</div>` : ""}
+    ${state.futuresView ? `<div class="foot-note">Viewing a stored run from history. <a href="#" onclick="selectFuturesRun(null);return false;">Back to the latest report</a></div>` : ""}
+
+    ${invalid ? `
+    <div class="panel panel-pad section-gap" style="border:1px solid var(--warn);">
+      <div class="panel-title" style="font-size:12.5px;color:var(--warn);">INVALID RUN &mdash; PROVIDER FAILURES</div>
+      <div class="foot-note">${agentErrors} of ${s.scenarios} scenarios (${fmtPctNA(s.agentErrorRatePct)}) ended in a provider, network or API error before the agent could answer. This run measured the provider, not the agent: agent-quality percentages are withheld (n/a) and provider errors are not counted as agent failures. Do not quote anything here as agent performance.</div>
+    </div>` : ""}
+
+    <div class="stat-row cols-4 section-gap">
+      <div class="stat-cell"><div class="stat-label">Scenarios</div><div class="stat-value">${s.scenarios}</div></div>
+      <div class="stat-cell"><div class="stat-label">Answered by agent</div><div class="stat-value">${answered}</div></div>
+      <div class="stat-cell"><div class="stat-label">Passed</div><div class="stat-value pass">${s.passed}</div></div>
+      <div class="stat-cell"><div class="stat-label">Agent failures</div><div class="stat-value ${s.failed>0?'fail':''}">${s.failed}</div></div>
+    </div>
+    <div class="stat-row cols-4 section-gap">
+      <div class="stat-cell"><div class="stat-label">Provider errors (not agent failures)</div><div class="stat-value ${agentErrors>0?'fail':''}">${agentErrors}</div></div>
+      <div class="stat-cell"><div class="stat-label">Decision reliability</div><div class="stat-value">${fmtPctNA(s.decisionReliabilityPct)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Risk compliance</div><div class="stat-value">${fmtPctNA(s.riskCompliancePct)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Decision consistency</div><div class="stat-value">${fmtPctNA(s.decisionConsistencyPct)}</div></div>
+    </div>
+    <div class="stat-row cols-4 section-gap">
+      <div class="stat-cell"><div class="stat-label">Position management</div><div class="stat-value">${fmtPctNA(s.positionManagementPct)}</div></div>
+      <div class="stat-cell"><div class="stat-label">Scenario coverage</div><div class="stat-value">${fmtPctNA(s.scenarioCoveragePct)}</div></div>
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Agent failure categories</div>
+      <div class="kv-grid section-gap">
+        <div class="kv"><div class="k">Risk violations</div><div class="v">${s.riskViolations}</div></div>
+        <div class="kv"><div class="k">Decision inconsistencies</div><div class="v">${s.consistencyFailures}</div></div>
+        <div class="kv"><div class="k">Invalid actions</div><div class="v">${s.invalidActions}</div></div>
+        <div class="kv"><div class="k">Unsafe reversals</div><div class="v">${s.unsafeReversals}</div></div>
+        <div class="kv"><div class="k">Malformed decisions</div><div class="v">${s.malformedDecisions}</div></div>
+      </div>
+    </div>
+
+    ${agentErrors > 0 ? `
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Provider errors by cause</div>
+      <div class="foot-note">These say nothing about the model's trading judgement. The scenario shows HOLD only because the harness records a fallback; it is flagged as an error, never scored as a model decision.</div>
+      ${byKind ? `<div class="kv-grid section-gap">${Object.entries(byKind).map(([k, n]) => `<div class="kv"><div class="k">${PROVIDER_ERROR_LABELS[k] || escHtml(k)}</div><div class="v">${n}</div></div>`).join("")}</div>`
+               : `<div class="hint-empty section-gap">This report predates the per-cause breakdown: ${agentErrors} provider errors in total, causes not recorded.</div>`}
+    </div>` : ""}
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Regime results</div>
+      <div class="table-scroll section-gap">
+        <table class="dtable"><thead><tr><th>Regime</th><th>Passed</th><th>Agent failures</th><th>Provider errors</th></tr></thead>
+        <tbody>${r.regimeResults.map(rr => {
+          const e = errsByRegime[rr.regime] || 0;
+          const af = rr.failed - e;
+          return `
+          <tr>
+            <td>${rr.regime.replace(/_/g," ")}</td>
+            <td class="pass">${rr.passed}/${rr.scenarios}</td>
+            <td class="${af>0?'fail':''}">${af}</td>
+            <td class="${e>0?'fail':''}">${e}</td>
+          </tr>`; }).join("")}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Mutation testing (decision-consistency check)</div>
+      ${r.mutationResults.length === 0
+        ? `<div class="hint-empty section-gap">${invalid ? "Skipped: the run was invalid because the provider was failing." : "No mutation comparisons ran, so decision consistency is n/a (not 100%)."}</div>`
+        : `<div class="foot-note">${r.mutationResults.length} total checks (bounded sample, not exhaustive) &mdash; one small field change at a time, holding everything else fixed. A decision change is only flagged if it's not explained by the size of the change or a real threshold being crossed.</div>
+      <div class="kv-grid section-gap">
+        <div class="kv"><div class="k">Decisions changed</div><div class="v">${mutChanged}/${r.mutationResults.length}</div></div>
+        <div class="kv"><div class="k">Flagged as inconsistent</div><div class="v">${mutFlagged}</div></div>
+      </div>`}
+    </div>
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Agent failures${agentFailures.length ? ` (${agentFailures.length})` : ""}</div>
+      ${agentFailures.length === 0 ? `<div class="hint-empty section-gap">${invalid ? "None recorded among the scenarios the agent answered &mdash; but this run is invalid, so that is not a clean result." : `No agent failures detected in this run. This means the agent passed every scenario generated &mdash; not a general safety guarantee: coverage is limited to these ${r.regimeResults.length} regimes and the mutation sample above.`}</div>` : `
+      <div class="table-scroll section-gap">
+        <table class="dtable"><thead><tr><th>Regime</th><th>Category</th><th>Agent decision</th><th>Why flagged</th></tr></thead>
+        <tbody>${agentFailures.slice(0, 30).map(f => `
+          <tr>
+            <td>${f.scenario.regime.replace(/_/g," ")}<br><span style="color:var(--muted);font-size:10px;">${escHtml(f.scenario.description)}</span></td>
+            <td><span class="badge fail">${FUTURES_FAILURE_LABELS[f.failure.category] || escHtml(f.failure.category)}</span></td>
+            <td>${escHtml(f.agentDecision.decision.action)} <span style="color:var(--muted);">(${escHtml(f.agentDecision.decision.confidence)})</span></td>
+            <td style="font-size:11px;">${f.failure.details.map(escHtml).join("<br>")}</td>
+          </tr>`).join("")}
+        </tbody></table>
+      </div>`}
+    </div>
+
+    ${providerFailures.length ? `
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Provider errors (${providerFailures.length})</div>
+      <div class="table-scroll section-gap">
+        <table class="dtable"><thead><tr><th>Regime</th><th>Cause</th><th>Provider message</th></tr></thead>
+        <tbody>${providerFailures.slice(0, 30).map(f => `
+          <tr>
+            <td>${f.scenario.regime.replace(/_/g," ")}</td>
+            <td><span class="badge warn">${PROVIDER_ERROR_LABELS[f.failure.providerErrorKind] || "Provider error"}</span></td>
+            <td style="font-size:10.5px;font-family:var(--mono);">${escHtml((f.agentDecision.agentError || "").slice(0, 220))}</td>
+          </tr>`).join("")}
+        </tbody></table>
+      </div>
+    </div>` : ""}
+
+    <div class="panel panel-pad section-gap">
+      <div class="panel-title" style="font-size:12.5px;">Run history (Futures)</div>
+      <div class="foot-note">Every stored run, newest first. Deterministic, adversarial and LLM runs are separate rows and are never averaged together.</div>
+      ${renderFuturesHistory(r.runId)}
+    </div>
+  `;
+}
+
 /* ================= SYSTEM / EVIDENCE PAGE ================= */
 
 function renderSystemPage() {
@@ -737,6 +1111,8 @@ function renderAll() {
   renderOverviewPage();
   renderCrashTestsPage();
   renderPaperTradingPage();
+  renderFuturesPaperTradingPage();
+  renderFuturesCrashTestsPage();
   renderSystemPage();
 }
 

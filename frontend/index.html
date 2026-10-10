@@ -27,7 +27,15 @@
       </div>
       <div class="nav-item" data-page="paper-trading">
         <svg viewBox="0 0 16 16" fill="none"><path d="M1.5 8h4l1.5-4 3 8 1.5-4h3" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
-        Paper Trading
+        Paper Trading (Spot)
+      </div>
+      <div class="nav-item" data-page="futures-paper-trading">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M1.5 8h4l1.5-4 3 8 1.5-4h3" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+        Paper Trading (Futures)
+      </div>
+      <div class="nav-item" data-page="futures-crash-tests">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.3"/></svg>
+        Crash Tests (Futures)
       </div>
       <div class="nav-item" data-page="failure-replay">
         <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.3"/></svg>
@@ -68,6 +76,7 @@
       <!-- ============== CRASH TESTS ============== -->
       <section class="page" id="page-crash-tests">
         <div class="panel panel-pad" id="ct-summary"></div>
+        <div class="panel panel-pad section-gap" id="ct-history"></div>
         <div class="grid-4 section-gap" id="ct-panels"></div>
 
         <div class="panel panel-pad section-gap" id="ct-consistency"></div>
@@ -94,9 +103,19 @@
         </div>
       </section>
 
-      <!-- ============== PAPER TRADING ============== -->
+      <!-- ============== PAPER TRADING (SPOT) ============== -->
       <section class="page" id="page-paper-trading">
         <div id="paper-trading-content"></div>
+      </section>
+
+      <!-- ============== PAPER TRADING (FUTURES) ============== -->
+      <section class="page" id="page-futures-paper-trading">
+        <div id="futures-paper-trading-content"></div>
+      </section>
+
+      <!-- ============== CRASH TESTS (FUTURES / POLYGRAPH) ============== -->
+      <section class="page" id="page-futures-crash-tests">
+        <div id="futures-crash-tests-content"></div>
       </section>
 
       <!-- ============== FAILURE REPLAY ============== -->
@@ -130,8 +149,7 @@
           agent from the synthetic specimen above. It can decide each trade either with a fixed deterministic rule or
           with a configured LLM; the <strong>DETERMINISTIC</strong> / <strong>LLM</strong> / <strong>LLM FALLBACK</strong>
           label on each trade reflects that specific trade's recorded <code>decision_source</code> and is the only
-          source of truth for how it was decided &mdash; not every trade is necessarily from the same mode, and this
-          page never assumes otherwise. <strong>LLM FALLBACK</strong> means an LLM decision was attempted but failed
+          source of truth for how it was decided &mdash; not every trade is necessarily from the same mode<strong>LLM FALLBACK</strong> means an LLM decision was attempted but failed
           (for example a network error) and the agent safely held instead. Synthetic and real evidence are never
           combined into one score.</p>
       </footer>

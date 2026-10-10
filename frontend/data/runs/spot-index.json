@@ -1,0 +1,86 @@
+[
+  {
+    "runId": "spot-1789486392-20260910-specimen",
+    "market": "spot",
+    "role": "specimen",
+    "kind": "simulated_specimen",
+    "agent": "Simulated Specimen Agent",
+    "agentMode": "simulated",
+    "provider": null,
+    "model": null,
+    "generatedAt": "2026-09-15T15:33:12+00:00",
+    "seed": 20260910,
+    "scenarios": 1000,
+    "passed": 718,
+    "failed": 282,
+    "riskViolations": 172,
+    "decisionInconsistencies": 110,
+    "providerFailures": 0,
+    "invalidActions": 0,
+    "malformedOutputs": 0,
+    "failureCategories": {
+      "risk_violation": 52,
+      "decision_inconsistency": 110,
+      "invalid_action": 0,
+      "malformed_output": 0,
+      "stale_or_missing_data": 1,
+      "execution_constraint_violation": 119,
+      "timeout_or_provider_failure": 0
+    },
+    "scores": {
+      "reliability": 79.2,
+      "consistency": 63.3,
+      "risk_discipline": 82.8,
+      "stress_performance": 76.9,
+      "execution_discipline": 93.9
+    },
+    "file": "spot-1789486392-20260910-specimen.json",
+    "detail": "full",
+    "imported": {
+      "from": "frontend/data/report.json + baseline_report.json + meta.json",
+      "note": "Imported verbatim from the reports saved at the time; timestamp from meta.json. Model/provider were not recorded."
+    }
+  },
+  {
+    "runId": "spot-1789486392-20260910-baseline",
+    "market": "spot",
+    "role": "baseline",
+    "kind": "deterministic",
+    "agent": "Fixed-Rule Baseline",
+    "agentMode": "rule-based",
+    "provider": null,
+    "model": null,
+    "generatedAt": "2026-09-15T15:33:12+00:00",
+    "seed": 20260910,
+    "scenarios": 1000,
+    "passed": 969,
+    "failed": 31,
+    "riskViolations": 31,
+    "decisionInconsistencies": 0,
+    "providerFailures": 0,
+    "invalidActions": 0,
+    "malformedOutputs": 0,
+    "failureCategories": {
+      "risk_violation": 0,
+      "decision_inconsistency": 0,
+      "invalid_action": 0,
+      "malformed_output": 0,
+      "stale_or_missing_data": 0,
+      "execution_constraint_violation": 31,
+      "timeout_or_provider_failure": 0
+    },
+    "scores": {
+      "reliability": 98.1,
+      "consistency": 100.0,
+      "risk_discipline": 96.9,
+      "stress_performance": 95.6,
+      "execution_discipline": 100.0
+    },
+    "file": "spot-1789486392-20260910-baseline.json",
+    "detail": "full",
+    "imported": {
+      "from": "frontend/data/report.json + baseline_report.json + meta.json",
+      "note": "Imported verbatim from the reports saved at the time; timestamp from meta.json. Model/provider were not recorded."
+    }
+  }
+]

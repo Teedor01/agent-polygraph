@@ -1,0 +1,2615 @@
+{
+  "run": {
+    "kind": "llm",
+    "market": "futures",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "countPerRegime": 2,
+    "mutationSampleSize": 0
+  },
+  "runId": "703e8d74-8790-4b0b-83fa-cac135227df4",
+  "seed": 20260910,
+  "agent": "Futures LLM Agent",
+  "generatedAt": "2026-10-10T03:39:59.764Z",
+  "scorecard": {
+    "scenarios": 42,
+    "answeredScenarios": 37,
+    "passed": 32,
+    "failed": 5,
+    "riskViolations": 1,
+    "consistencyFailures": 0,
+    "invalidActions": 0,
+    "unsafeReversals": 0,
+    "malformedDecisions": 0,
+    "agentErrors": 5,
+    "agentErrorRatePct": 11.9,
+    "providerErrorsByKind": {
+      "quota_exhausted": 4,
+      "network": 1
+    },
+    "mutationChecks": 0,
+    "validity": "valid",
+    "decisionReliabilityPct": 86.49,
+    "riskCompliancePct": 97.3,
+    "decisionConsistencyPct": null,
+    "positionManagementPct": 100,
+    "invalidDecisionRatePct": 0,
+    "unsafeActionRatePct": 0,
+    "scenarioCoveragePct": 100
+  },
+  "regimeResults": [
+    {
+      "regime": "bull_trend",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "bear_trend",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "sideways",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "volatility_spike",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "sharp_price_drop",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "sharp_price_increase",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "momentum_reversal",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "volume_spike",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "volume_collapse",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "breakout",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "breakdown",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "overbought",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "oversold",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "conflicting_indicators",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "weak_trend",
+      "scenarios": 2,
+      "passed": 0,
+      "failed": 2
+    },
+    {
+      "regime": "strong_trend",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "existing_long",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "existing_short",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "flat",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    },
+    {
+      "regime": "data_missing_price",
+      "scenarios": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "regime": "data_missing_position",
+      "scenarios": 2,
+      "passed": 1,
+      "failed": 1
+    }
+  ],
+  "mutationResults": [],
+  "failures": [
+    {
+      "scenario": {
+        "id": "sideways-001-20260910",
+        "regime": "sideways",
+        "description": "Range-bound / sideways market: price oscillating around SMA20 and SMA50 with no directional conviction.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83861.02285587229,
+          "previousPrice": 83856.50633428668,
+          "priceChangePct": 0.005386012109311758,
+          "momentum": 0.1960609840694815,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 48.68559711240232,
+          "sma20": 83861.02285587229,
+          "sma50": 83861.02285587229,
+          "distanceFromSma20Pct": 0,
+          "distanceFromSma50Pct": 0,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 83861.02285587229,
+              "high": 83891.4114123385,
+              "low": 83619.74835485799,
+              "close": 83734.08610345992,
+              "volume": 61.87312989961356
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 83734.08610345992,
+              "high": 83846.90555949413,
+              "low": 83688.77318747283,
+              "close": 83845.23363718166,
+              "volume": 52.821726384572685
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83845.23363718166,
+              "high": 83913.6333358244,
+              "low": 83681.06409301382,
+              "close": 83704.32312024737,
+              "volume": 56.29794764332473
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83704.32312024737,
+              "high": 83818.48166253608,
+              "low": 83463.44871043523,
+              "close": 83527.05586832533,
+              "volume": 54.809654229320586
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 83527.05586832533,
+              "high": 83559.36678470818,
+              "low": 83231.59479467117,
+              "close": 83364.29274032048,
+              "volume": 53.87870166450739
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83364.29274032048,
+              "high": 83488.08228955137,
+              "low": 83307.49115939482,
+              "close": 83479.16743840915,
+              "volume": 63.386859837919474
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83479.16743840915,
+              "high": 83746.92076120523,
+              "low": 83346.71524316189,
+              "close": 83669.55364924933,
+              "volume": 55.06510176695883
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83669.55364924933,
+              "high": 84015.99272125225,
+              "low": 83653.06255295855,
+              "close": 83958.70131902002,
+              "volume": 61.349503230303526
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83958.70131902002,
+              "high": 83975.71417636913,
+              "low": 83928.04705885235,
+              "close": 83972.53615879407,
+              "volume": 67.03943207394332
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83972.53615879407,
+              "high": 84064.37783877675,
+              "low": 83700.57324669727,
+              "close": 83861.02285587229,
+              "volume": 55.6977258855477
+            }
+          ],
+          "volume": 60,
+          "averageVolume": 60,
+          "volumeRatio": 1,
+          "bestBid": 83848.44370244391,
+          "bestAsk": 83873.60200930067,
+          "spreadPct": 0.03,
+          "bidVolume": 30,
+          "askVolume": 30,
+          "orderBookImbalance": 0,
+          "markPrice": 83861.14852814253,
+          "fundingRate": 0.0001,
+          "indexPrice": 83858.54443387984
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "No meaningful trend, momentum, or RSI extreme - HOLD is the well-supported outcome."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0,
+          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 2s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4476, Requested 3689. Please try again in 1.2375s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        },
+        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 2s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4476, Requested 3689. Please try again in 1.2375s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "agent_error",
+        "providerErrorKind": "quota_exhausted",
+        "details": [
+          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 2s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4476, Requested 3689. Please try again in 1.2375s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        ],
+        "severity": "HIGH"
+      }
+    },
+    {
+      "scenario": {
+        "id": "sharp_price_drop-001-20260910",
+        "regime": "sharp_price_drop",
+        "description": "Sharp single-window price drop with elevated panic volume and negative order-book imbalance.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84081.64067264648,
+          "previousPrice": 86604.08989282587,
+          "priceChangePct": -2.9126213592232975,
+          "momentum": -3.5,
+          "volatilityPct": 2.2,
+          "atr": 150,
+          "rsi": 27,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": 0.09719127696009223,
+          "distanceFromSma50Pct": 0.09719127696009223,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 120116.62953235212,
+              "high": 120399.620180746,
+              "low": 115858.61345327894,
+              "close": 115936.68503179436,
+              "volume": 69.80809969827533
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 115936.68503179436,
+              "high": 115991.86556051203,
+              "low": 111792.69678284749,
+              "close": 111856.39697990609,
+              "volume": 61.692343573085964
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 111856.39697990609,
+              "high": 111909.75095139713,
+              "low": 108416.33454063098,
+              "close": 108435.04787521854,
+              "volume": 53.420166559517384
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 108435.04787521854,
+              "high": 108493.139375933,
+              "low": 105610.00072828667,
+              "close": 105696.4004763411,
+              "volume": 67.00054028537124
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 105696.4004763411,
+              "high": 105761.13631434408,
+              "low": 102497.33765373265,
+              "close": 102614.26458533766,
+              "volume": 62.812442472204566
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 102614.26458533766,
+              "high": 102636.4422798072,
+              "low": 99208.38565564275,
+              "close": 99338.80715424204,
+              "volume": 64.5198677573353
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 99338.80715424204,
+              "high": 99531.34370110776,
+              "low": 96179.60706271812,
+              "close": 96397.15490596744,
+              "volume": 52.93517135549337
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 96397.15490596744,
+              "high": 96559.23797636121,
+              "low": 93182.53458368465,
+              "close": 93345.76658676862,
+              "volume": 64.9603114509955
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 93345.76658676862,
+              "high": 93356.09435005575,
+              "low": 90908.83416458682,
+              "close": 90913.59589567842,
+              "volume": 63.336078808642924
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 90913.59589567842,
+              "high": 91097.30020613581,
+              "low": 87963.64922027291,
+              "close": 84081.64067264648,
+              "volume": 56.118607870303094
+            }
+          ],
+          "volume": 160,
+          "averageVolume": 60,
+          "volumeRatio": 2.6666666666666665,
+          "bestBid": 84069.02842654558,
+          "bestAsk": 84094.25291874737,
+          "spreadPct": 0.03,
+          "bidVolume": 56,
+          "askVolume": 104,
+          "orderBookImbalance": -0.3,
+          "markPrice": 84094.95883028189,
+          "fundingRate": 0.0001,
+          "indexPrice": 84087.45826353977
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "A sharp single-window move - the system prompt explicitly warns against overreacting to one candle, so both HOLD and a well-justified OPEN_SHORT are acceptable; only a contradictory OPEN_LONG is graded as a conflict."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0,
+          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4518, Requested 3582. Please try again in 750ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        },
+        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4518, Requested 3582. Please try again in 750ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "agent_error",
+        "providerErrorKind": "quota_exhausted",
+        "details": [
+          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4518, Requested 3582. Please try again in 750ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        ],
+        "severity": "HIGH"
+      }
+    },
+    {
+      "scenario": {
+        "id": "momentum_reversal-001-20260910",
+        "regime": "momentum_reversal",
+        "description": "Early reversal signature: short-term momentum and SMA20 turning up while price is still below the longer SMA50.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84097.61049209163,
+          "previousPrice": 83256.6343871707,
+          "priceChangePct": 1.0101010101010137,
+          "momentum": 1.8,
+          "volatilityPct": 1.6,
+          "atr": 150,
+          "rsi": 55,
+          "sma20": 83677.12243963117,
+          "sma50": 85779.56270193346,
+          "distanceFromSma20Pct": 0.5025125628140633,
+          "distanceFromSma50Pct": -1.9607843137254968,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 77868.1578630478,
+              "high": 78925.59223079827,
+              "low": 77779.74939281835,
+              "close": 78833.1846296176,
+              "volume": 51.661011897958815
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 78833.1846296176,
+              "high": 79277.89279110948,
+              "low": 78828.68025987335,
+              "close": 79233.50364545942,
+              "volume": 65.17021085135639
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 79233.50364545942,
+              "high": 79736.54460932364,
+              "low": 79214.22975032832,
+              "close": 79672.38122574532,
+              "volume": 60.609745434485376
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 79672.38122574532,
+              "high": 80609.58664040036,
+              "low": 79600.58569556476,
+              "close": 80497.92367165266,
+              "volume": 67.84485118929297
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 80497.92367165266,
+              "high": 80964.7951080725,
+              "low": 80424.9952134407,
+              "close": 80815.92238485106,
+              "volume": 62.192098130472004
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 80815.92238485106,
+              "high": 81312.72188149196,
+              "low": 80735.12112234154,
+              "close": 81233.04791632712,
+              "volume": 51.92555089015514
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 81233.04791632712,
+              "high": 81651.73286662521,
+              "low": 81107.31517857042,
+              "close": 81527.1997276805,
+              "volume": 66.25316372606903
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 81527.1997276805,
+              "high": 82218.46118614203,
+              "low": 81382.4842717205,
+              "close": 82097.04501951027,
+              "volume": 66.8240753095597
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 82097.04501951027,
+              "high": 82954.12502430845,
+              "low": 82022.03525039658,
+              "close": 82831.08155498731,
+              "volume": 57.91795758996159
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 82831.08155498731,
+              "high": 83781.23290542784,
+              "low": 82712.61367975222,
+              "close": 84097.61049209163,
+              "volume": 57.153976052068174
+            }
+          ],
+          "volume": 95,
+          "averageVolume": 60,
+          "volumeRatio": 1.5833333333333333,
+          "bestBid": 84084.99585051781,
+          "bestAsk": 84110.22513366544,
+          "spreadPct": 0.03,
+          "bidVolume": 47.5,
+          "askVolume": 47.5,
+          "orderBookImbalance": 0,
+          "markPrice": 84109.72815041732,
+          "fundingRate": 0.0001,
+          "indexPrice": 84105.58215346921
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Deliberately early/ambiguous - the longer trend hasn't confirmed yet, so no hard directional grading is applied."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0,
+          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4443, Requested 3588. Please try again in 232.499999ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        },
+        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4443, Requested 3588. Please try again in 232.499999ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "agent_error",
+        "providerErrorKind": "quota_exhausted",
+        "details": [
+          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4443, Requested 3588. Please try again in 232.499999ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        ],
+        "severity": "HIGH"
+      }
+    },
+    {
+      "scenario": {
+        "id": "volume_collapse-001-20260910",
+        "regime": "volume_collapse",
+        "description": "Volume collapse (volumeRatio well below 1) - thin, low-conviction trading.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83629.2037965171,
+          "previousPrice": 83625.59573216547,
+          "priceChangePct": 0.0043145454690551146,
+          "momentum": 0,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 50,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": -0.4414240517653525,
+          "distanceFromSma50Pct": -0.4414240517653525,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 83629.2037965171,
+              "high": 83663.96375315127,
+              "low": 83451.05809948508,
+              "close": 83469.2685371474,
+              "volume": 58.83656244724989
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 83469.2685371474,
+              "high": 83700.68425353375,
+              "low": 83392.47208712158,
+              "close": 83601.5853916735,
+              "volume": 53.16316385753453
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83601.5853916735,
+              "high": 83677.31903133205,
+              "low": 83349.34970047305,
+              "close": 83415.96070548089,
+              "volume": 59.31684470269829
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83415.96070548089,
+              "high": 83633.13310364643,
+              "low": 83412.23427240242,
+              "close": 83565.32781967812,
+              "volume": 67.69418784882873
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 83565.32781967812,
+              "high": 83651.62768653095,
+              "low": 83436.59281480442,
+              "close": 83528.805027566,
+              "volume": 57.0373426284641
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83528.805027566,
+              "high": 83659.63937452185,
+              "low": 83457.4855068768,
+              "close": 83624.96680250482,
+              "volume": 65.2140048192814
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83624.96680250482,
+              "high": 83666.12612146081,
+              "low": 83304.17231075556,
+              "close": 83380.89356390815,
+              "volume": 52.358310711570084
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83380.89356390815,
+              "high": 83404.02258674713,
+              "low": 83341.98429026804,
+              "close": 83401.90227601488,
+              "volume": 52.03196091577411
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83401.90227601488,
+              "high": 83528.08695942926,
+              "low": 83384.51681371695,
+              "close": 83449.03575552515,
+              "volume": 59.930068496614695
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83449.03575552515,
+              "high": 83562.64596403482,
+              "low": 83432.05416736624,
+              "close": 83629.2037965171,
+              "volume": 51.61136565729976
+            }
+          ],
+          "volume": 15,
+          "averageVolume": 60,
+          "volumeRatio": 0.25,
+          "bestBid": 83616.65941594762,
+          "bestAsk": 83641.74817708659,
+          "spreadPct": 0.03,
+          "bidVolume": 7.5,
+          "askVolume": 7.5,
+          "orderBookImbalance": 0,
+          "markPrice": 83637.35579868469,
+          "fundingRate": 0.0001,
+          "indexPrice": 83617.21424042548
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Thin volume is a reason for caution, not a directional signal."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0,
+          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4453, Requested 3579. Please try again in 240ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        },
+        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4453, Requested 3579. Please try again in 240ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n",
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "agent_error",
+        "providerErrorKind": "quota_exhausted",
+        "details": [
+          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 1s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4453, Requested 3579. Please try again in 240ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        ],
+        "severity": "HIGH"
+      }
+    },
+    {
+      "scenario": {
+        "id": "weak_trend-000-20260910",
+        "regime": "weak_trend",
+        "description": "Weak/borderline trend: mildly bullish tilt across the board, but nowhere near strong-conviction levels.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83593.00169547088,
+          "previousPrice": 83509.40869377542,
+          "priceChangePct": 0.10010010010009453,
+          "momentum": 0.4,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 53,
+          "sma20": 83342.22269038447,
+          "sma50": 83175.03668699352,
+          "distanceFromSma20Pct": 0.3009027081243738,
+          "distanceFromSma50Pct": 0.5025125628140774,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 82765.34821333751,
+              "high": 82847.03559563379,
+              "low": 82443.61461840685,
+              "close": 82605.22407404955,
+              "volume": 55.61805624514818
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 82605.22407404955,
+              "high": 82714.35940794449,
+              "low": 82539.23212015658,
+              "close": 82550.36718791243,
+              "volume": 53.78719904925674
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 82550.36718791243,
+              "high": 82935.91732372728,
+              "low": 82422.7375698483,
+              "close": 82871.95321866575,
+              "volume": 58.88285516761243
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 82871.95321866575,
+              "high": 83346.93837443189,
+              "low": 82855.59206474213,
+              "close": 83196.97202813902,
+              "volume": 56.4609109191224
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 83196.97202813902,
+              "high": 83356.30800601472,
+              "low": 82751.2538629971,
+              "close": 82897.44422306388,
+              "volume": 66.34229553397745
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 82897.44422306388,
+              "high": 82931.85456605138,
+              "low": 82784.56472963735,
+              "close": 82888.81083061648,
+              "volume": 65.67787252832204
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 82888.81083061648,
+              "high": 82901.723241976,
+              "low": 82505.78533666846,
+              "close": 82650.96120289621,
+              "volume": 50.693557928316295
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 82650.96120289621,
+              "high": 83023.97087598134,
+              "low": 82612.7632469349,
+              "close": 83006.32645552096,
+              "volume": 63.88580967672169
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83006.32645552096,
+              "high": 83125.42347911415,
+              "low": 83003.28281975708,
+              "close": 83009.74462227634,
+              "volume": 64.50092197861522
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83009.74462227634,
+              "high": 83215.13660795707,
+              "low": 83005.3278933573,
+              "close": 83593.00169547088,
+              "volume": 56.33688346948475
+            }
+          ],
+          "volume": 65,
+          "averageVolume": 60,
+          "volumeRatio": 1.0833333333333333,
+          "bestBid": 83580.46274521656,
+          "bestAsk": 83605.54064572521,
+          "spreadPct": 0.03,
+          "bidVolume": 32.5,
+          "askVolume": 32.5,
+          "orderBookImbalance": 0,
+          "markPrice": 83599.06397940406,
+          "fundingRate": 0.0001,
+          "indexPrice": 83595.13063322532
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Graded for overconfidence only: a directional open here with high stated confidence is flagged as evidence_conflict."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.7,
+          "reason": "price above SMAs, positive momentum, volume up"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "evidence_conflict",
+        "details": [
+          "Confidence 0.7 is high despite regime 'weak_trend' being constructed with only weak, borderline evidence."
+        ],
+        "severity": "LOW"
+      }
+    },
+    {
+      "scenario": {
+        "id": "weak_trend-001-20260910",
+        "regime": "weak_trend",
+        "description": "Weak/borderline trend: mildly bullish tilt across the board, but nowhere near strong-conviction levels.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84090.41056316346,
+          "previousPrice": 84006.3201526003,
+          "priceChangePct": 0.10010010010010009,
+          "momentum": 0.4,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 53,
+          "sma20": 83838.13933147397,
+          "sma50": 83669.95851034764,
+          "distanceFromSma20Pct": 0.3009027081243731,
+          "distanceFromSma50Pct": 0.5025125628140703,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 83257.8322407559,
+              "high": 83598.62759510777,
+              "low": 83180.40342720864,
+              "close": 83487.08966694404,
+              "volume": 50.266019818373024
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 83487.08966694404,
+              "high": 83534.4670540688,
+              "low": 83310.12431074657,
+              "close": 83414.21757954825,
+              "volume": 53.89050770550966
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83414.21757954825,
+              "high": 83934.3195528626,
+              "low": 83327.3963653351,
+              "close": 83822.38011452499,
+              "volume": 52.34999816864729
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83822.38011452499,
+              "high": 84103.80482978276,
+              "low": 83746.22180627803,
+              "close": 84084.3373868766,
+              "volume": 50.197307341732085
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 84084.3373868766,
+              "high": 84140.51379997731,
+              "low": 83750.07788961282,
+              "close": 83879.13334054842,
+              "volume": 54.878274775110185
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83879.13334054842,
+              "high": 84243.7404572884,
+              "low": 83870.3102616443,
+              "close": 84129.13102984337,
+              "volume": 50.205171327106655
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 84129.13102984337,
+              "high": 84557.99329884147,
+              "low": 84116.88068463729,
+              "close": 84528.70356844504,
+              "volume": 53.267461131326854
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84528.70356844504,
+              "high": 84900.70810566712,
+              "low": 84426.99884633206,
+              "close": 84871.33714197375,
+              "volume": 61.05389816686511
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84871.33714197375,
+              "high": 85385.5846874946,
+              "low": 84850.17033094622,
+              "close": 85224.86556723637,
+              "volume": 62.73896930273622
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 85224.86556723637,
+              "high": 85354.4533037584,
+              "low": 84988.54266440166,
+              "close": 84090.41056316346,
+              "volume": 61.69760312419385
+            }
+          ],
+          "volume": 65,
+          "averageVolume": 60,
+          "volumeRatio": 1.0833333333333333,
+          "bestBid": 84077.79700157899,
+          "bestAsk": 84103.02412474793,
+          "spreadPct": 0.03,
+          "bidVolume": 32.5,
+          "askVolume": 32.5,
+          "orderBookImbalance": 0,
+          "markPrice": 84076.18367490167,
+          "fundingRate": 0.0001,
+          "indexPrice": 84085.18796609137
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Graded for overconfidence only: a directional open here with high stated confidence is flagged as evidence_conflict."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.65,
+          "reason": "price above SMAs, positive momentum, volume support"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "evidence_conflict",
+        "details": [
+          "Confidence 0.65 is high despite regime 'weak_trend' being constructed with only weak, borderline evidence."
+        ],
+        "severity": "LOW"
+      }
+    },
+    {
+      "scenario": {
+        "id": "existing_long-000-20260910",
+        "regime": "existing_long",
+        "description": "Existing LONG position experiencing an ordinary small adverse wiggle - original thesis is not materially challenged.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83984.51071025949,
+          "previousPrice": 84068.49522096974,
+          "priceChangePct": -0.09990009990008226,
+          "momentum": -0.3,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 47,
+          "sma20": 84574.76329557254,
+          "sma50": 85165.01588088562,
+          "distanceFromSma20Pct": -0.6979062811565085,
+          "distanceFromSma50Pct": -1.3861386138613767,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 84832.83910127221,
+              "high": 84975.98257390002,
+              "low": 84826.38871246761,
+              "close": 84944.36788533466,
+              "volume": 68.45399891026318
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 84944.36788533466,
+              "high": 85094.1308733146,
+              "low": 84875.57545983246,
+              "close": 84995.84095766555,
+              "volume": 64.36567980796099
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 84995.84095766555,
+              "high": 85183.39727771944,
+              "low": 84967.32166427678,
+              "close": 85082.99436875373,
+              "volume": 68.41418519150466
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 85082.99436875373,
+              "high": 85164.83133666373,
+              "low": 84913.01512464354,
+              "close": 84962.92595934898,
+              "volume": 64.22535389661789
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 84962.92595934898,
+              "high": 84994.77259444552,
+              "low": 84862.93219342202,
+              "close": 84984.5459495541,
+              "volume": 55.73327753227204
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 84984.5459495541,
+              "high": 85022.49678301421,
+              "low": 84795.24024379178,
+              "close": 84891.87507332397,
+              "volume": 63.79757460206747
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 84891.87507332397,
+              "high": 84938.45072001366,
+              "low": 84780.14597112125,
+              "close": 84862.75010629762,
+              "volume": 69.60520724300295
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84862.75010629762,
+              "high": 84926.85535946973,
+              "low": 84742.39906405972,
+              "close": 84767.17332269231,
+              "volume": 62.055588946677744
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84767.17332269231,
+              "high": 84836.47059937159,
+              "low": 84702.61969363011,
+              "close": 84766.87697921353,
+              "volume": 54.53802379779518
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 84766.87697921353,
+              "high": 84981.51611095264,
+              "low": 84727.50898159808,
+              "close": 83984.51071025949,
+              "volume": 52.86768698133528
+            }
+          ],
+          "volume": 62,
+          "averageVolume": 60,
+          "volumeRatio": 1.0333333333333334,
+          "bestBid": 83971.91303365295,
+          "bestAsk": 83997.10838686604,
+          "spreadPct": 0.03,
+          "bidVolume": 29.45,
+          "askVolume": 32.550000000000004,
+          "orderBookImbalance": -0.05,
+          "markPrice": 83976.36999490582,
+          "fundingRate": 0.0001,
+          "indexPrice": 83973.87597816208
+        },
+        "position": {
+          "available": true,
+          "side": "LONG",
+          "entryPrice": 84321.79790186696,
+          "quantity": 0.0003,
+          "leverage": 3,
+          "unrealizedPnl": -0.10118615748223964,
+          "liquidationPrice": 59025.25853130686,
+          "margin": 8.432179790186696,
+          "positionId": "synthetic-long",
+          "raw": {
+            "synthetic": true
+          },
+          "error": null
+        },
+        "expectedBias": "bullish",
+        "highBurdenToClose": true,
+        "notes": [
+          "Graded strictly: closing here (CLOSE_LONG) on this little noise is an evidence conflict per the system prompt's own 'do not close on ordinary noise' rule.",
+          "position.liquidationPrice on this scenario is synthetic test-data math (see approxLiquidationPrice in this file), NOT Bitget's real liquidation formula."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "CLOSE_LONG",
+          "confidence": 0.7,
+          "reason": "price below SMAs, negative momentum, bearish candle"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "CLOSE_LONG",
+        "qty": 0.0003,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "evidence_conflict",
+        "details": [
+          "Closed a LONG position on an ordinary small adverse wiggle, with no material deterioration in the underlying thesis.",
+          "Graded strictly: closing here (CLOSE_LONG) on this little noise is an evidence conflict per the system prompt's own 'do not close on ordinary noise' rule.",
+          "position.liquidationPrice on this scenario is synthetic test-data math (see approxLiquidationPrice in this file), NOT Bitget's real liquidation formula."
+        ],
+        "severity": "MEDIUM"
+      }
+    },
+    {
+      "scenario": {
+        "id": "existing_short-000-20260910",
+        "regime": "existing_short",
+        "description": "Existing SHORT position experiencing an ordinary small adverse wiggle - original thesis is not materially challenged.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83972.38434863694,
+          "previousPrice": 84056.35673298557,
+          "priceChangePct": -0.09990009990008941,
+          "momentum": 0.3,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 53,
+          "sma20": 83386.91951752095,
+          "sma50": 82801.45468640495,
+          "distanceFromSma20Pct": 0.7021063189568748,
+          "distanceFromSma50Pct": 1.4141414141414226,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 83140.97460261083,
+              "high": 83452.61054842934,
+              "low": 83111.06809732872,
+              "close": 83407.3852416558,
+              "volume": 69.74434293806553
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 83407.3852416558,
+              "high": 83615.09366390068,
+              "low": 83366.22106232776,
+              "close": 83538.72751544972,
+              "volume": 53.47431140486151
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83538.72751544972,
+              "high": 83854.85956943888,
+              "low": 83520.76787743319,
+              "close": 83803.0015391015,
+              "volume": 62.815076620317996
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83803.0015391015,
+              "high": 83826.41281602974,
+              "low": 83649.97993829905,
+              "close": 83736.64214972446,
+              "volume": 55.99048104137182
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 83736.64214972446,
+              "high": 84019.59712215183,
+              "low": 83729.50503890692,
+              "close": 83978.72817946147,
+              "volume": 64.86839020624757
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83978.72817946147,
+              "high": 84069.11703247667,
+              "low": 83896.11703239188,
+              "close": 83955.83774212698,
+              "volume": 60.632086992263794
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83955.83774212698,
+              "high": 84099.68609427333,
+              "low": 83919.44065813803,
+              "close": 84062.45526950454,
+              "volume": 60.141148045659065
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84062.45526950454,
+              "high": 84231.1478841272,
+              "low": 83971.13855655881,
+              "close": 84223.81582458944,
+              "volume": 55.497140027582645
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84223.81582458944,
+              "high": 84558.92051089343,
+              "low": 84215.52645787835,
+              "close": 84529.9530535481,
+              "volume": 66.03035777807236
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 84529.9530535481,
+              "high": 84599.01594371203,
+              "low": 84386.29933479482,
+              "close": 83972.38434863694,
+              "volume": 61.85065886005759
+            }
+          ],
+          "volume": 62,
+          "averageVolume": 60,
+          "volumeRatio": 1.0333333333333334,
+          "bestBid": 83959.78849098465,
+          "bestAsk": 83984.98020628924,
+          "spreadPct": 0.03,
+          "bidVolume": 32.550000000000004,
+          "askVolume": 29.45,
+          "orderBookImbalance": 0.05,
+          "markPrice": 83958.9288726739,
+          "fundingRate": 0.0001,
+          "indexPrice": 83973.09305947441
+        },
+        "position": {
+          "available": true,
+          "side": "SHORT",
+          "entryPrice": 83637.83301657066,
+          "quantity": 0.0003,
+          "leverage": 3,
+          "unrealizedPnl": -0.100365399619886,
+          "liquidationPrice": 108729.18292154185,
+          "margin": 8.363783301657065,
+          "positionId": "synthetic-short",
+          "raw": {
+            "synthetic": true
+          },
+          "error": null
+        },
+        "expectedBias": "bearish",
+        "highBurdenToClose": true,
+        "notes": [
+          "Graded strictly: closing here (CLOSE_SHORT) on this little noise is an evidence conflict per the system prompt's own 'do not close on ordinary noise' rule.",
+          "position.liquidationPrice on this scenario is synthetic test-data math (see approxLiquidationPrice in this file), NOT Bitget's real liquidation formula."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "CLOSE_SHORT",
+          "confidence": 0.7,
+          "reason": "price above SMAs, bullish candles, weakening short thesis"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "CLOSE_SHORT",
+        "qty": 0.0003,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "evidence_conflict",
+        "details": [
+          "Closed a SHORT position on an ordinary small adverse wiggle, with no material deterioration in the underlying thesis.",
+          "Graded strictly: closing here (CLOSE_SHORT) on this little noise is an evidence conflict per the system prompt's own 'do not close on ordinary noise' rule.",
+          "position.liquidationPrice on this scenario is synthetic test-data math (see approxLiquidationPrice in this file), NOT Bitget's real liquidation formula."
+        ],
+        "severity": "MEDIUM"
+      }
+    },
+    {
+      "scenario": {
+        "id": "flat-001-20260910",
+        "regime": "flat",
+        "description": "Minimal-signal baseline: no trend, no momentum, no volatility or volume anomaly.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83889.29745865054,
+          "previousPrice": 83889.29745865054,
+          "priceChangePct": 0,
+          "momentum": 0,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 50,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": -0.131788739701733,
+          "distanceFromSma50Pct": -0.131788739701733,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 83889.29745865054,
+              "high": 83909.92135944097,
+              "low": 83810.8535082004,
+              "close": 83838.71673762232,
+              "volume": 57.21081277821213
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 83838.71673762232,
+              "high": 83885.41999534576,
+              "low": 83796.15621752877,
+              "close": 83797.00879401754,
+              "volume": 68.59156234655529
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83797.00879401754,
+              "high": 83805.47400285867,
+              "low": 83667.2311728093,
+              "close": 83687.8332520817,
+              "volume": 56.07090527191758
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83687.8332520817,
+              "high": 83768.54071532113,
+              "low": 83642.1005235599,
+              "close": 83766.52334052352,
+              "volume": 53.48698568530381
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 83766.52334052352,
+              "high": 83815.53863089105,
+              "low": 83729.57143212891,
+              "close": 83763.15936269502,
+              "volume": 54.059523195028305
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83763.15936269502,
+              "high": 83801.69341827265,
+              "low": 83634.07286541205,
+              "close": 83683.94296933213,
+              "volume": 56.262133130803704
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83683.94296933213,
+              "high": 83769.24005598907,
+              "low": 83659.29620182705,
+              "close": 83767.8709712386,
+              "volume": 52.4806804722175
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83767.8709712386,
+              "high": 83768.24704270942,
+              "low": 83635.15149347094,
+              "close": 83656.0776682963,
+              "volume": 54.00830581318587
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83656.0776682963,
+              "high": 83718.0255575904,
+              "low": 83653.52924625923,
+              "close": 83669.72012490376,
+              "volume": 53.73953039292246
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83669.72012490376,
+              "high": 83832.09203901926,
+              "low": 83637.2838142401,
+              "close": 83889.29745865054,
+              "volume": 61.18623132351786
+            }
+          ],
+          "volume": 60,
+          "averageVolume": 60,
+          "volumeRatio": 1,
+          "bestBid": 83876.71406403175,
+          "bestAsk": 83901.88085326934,
+          "spreadPct": 0.03,
+          "bidVolume": 30,
+          "askVolume": 30,
+          "orderBookImbalance": 0,
+          "markPrice": 83874.09797065602,
+          "fundingRate": 0.0001,
+          "indexPrice": 83894.48028407521
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Deliberately low-information - a directional open here has no supporting evidence."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0,
+          "reason": "LLM decision failed, defaulting to HOLD: LLM network request failed: fetch failed | cause: AggregateError"
+        },
+        "agentError": "LLM network request failed: fetch failed | cause: AggregateError",
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": false,
+      "failure": {
+        "category": "agent_error",
+        "providerErrorKind": "network",
+        "details": [
+          "Decision function failed: LLM network request failed: fetch failed | cause: AggregateError"
+        ],
+        "severity": "HIGH"
+      }
+    },
+    {
+      "scenario": {
+        "id": "data_missing_position-000-20260910",
+        "regime": "data_missing_position",
+        "description": "Position state could not be safely queried this cycle, even though market data is otherwise normal.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84168.37626473978,
+          "previousPrice": 84168.37626473978,
+          "priceChangePct": 0,
+          "momentum": 1.5,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 60,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": 0.20044793421402576,
+          "distanceFromSma50Pct": 0.20044793421402576,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 84168.37626473978,
+              "high": 84284.27379295918,
+              "low": 84073.83241300938,
+              "close": 84234.2421800144,
+              "volume": 57.41995860822499
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 84234.2421800144,
+              "high": 84256.60215594684,
+              "low": 83908.96612371223,
+              "close": 83989.77710508772,
+              "volume": 69.1527901403606
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83989.77710508772,
+              "high": 84237.11967043113,
+              "low": 83984.31540678057,
+              "close": 84138.38952654066,
+              "volume": 55.64355422742665
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 84138.38952654066,
+              "high": 84145.18402248186,
+              "low": 83822.82449300341,
+              "close": 83915.74874134442,
+              "volume": 52.05104219261557
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 83915.74874134442,
+              "high": 83969.90119515176,
+              "low": 83837.35425962176,
+              "close": 83919.62099562945,
+              "volume": 61.46754072513431
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 83919.62099562945,
+              "high": 84089.06228898995,
+              "low": 83898.50987032513,
+              "close": 84010.6036706804,
+              "volume": 50.09730069898069
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 84010.6036706804,
+              "high": 84061.88290942757,
+              "low": 83995.80591507096,
+              "close": 84006.22344228205,
+              "volume": 54.468926349654794
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84006.22344228205,
+              "high": 84114.1049995194,
+              "low": 83998.54101736573,
+              "close": 84082.2041889188,
+              "volume": 69.80779811739922
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84082.2041889188,
+              "high": 84348.88334450294,
+              "low": 84013.63952617515,
+              "close": 84263.17070636214,
+              "volume": 69.81925894040614
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 84263.17070636214,
+              "high": 84276.43862239861,
+              "low": 84058.83398260981,
+              "close": 84168.37626473978,
+              "volume": 59.46252292022109
+            }
+          ],
+          "volume": 60,
+          "averageVolume": 60,
+          "volumeRatio": 1,
+          "bestBid": 84155.75100830007,
+          "bestAsk": 84181.0015211795,
+          "spreadPct": 0.03,
+          "bidVolume": 30,
+          "askVolume": 30,
+          "orderBookImbalance": 0,
+          "markPrice": 84181.6656656457,
+          "fundingRate": 0.0001,
+          "indexPrice": 84160.32914805177
+        },
+        "position": {
+          "available": false,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": "synthetic: position query failed"
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Tests the risk engine's 'never assume FLAT' rule - anything but HOLD must be rejected regardless of how bullish the market looks."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.7,
+          "reason": "Bullish momentum, price above SMAs, supportive RSI"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": false,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": [
+          "position state unavailable (synthetic: position query failed) - refusing every action except HOLD"
+        ]
+      },
+      "passed": false,
+      "failure": {
+        "category": "risk_violation",
+        "details": [
+          "position state unavailable (synthetic: position query failed) - refusing every action except HOLD"
+        ],
+        "severity": "MEDIUM"
+      }
+    }
+  ],
+  "replaySample": [
+    {
+      "scenario": {
+        "id": "bull_trend-000-20260910",
+        "regime": "bull_trend",
+        "description": "Sustained bullish trend: price above SMA20 above SMA50, positive momentum, RSI in bullish territory, order flow tilted to bid side.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83836.24347629026,
+          "previousPrice": 83417.0622589088,
+          "priceChangePct": 0.5025125628140739,
+          "momentum": 2.2,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 62,
+          "sma20": 82578.69982414591,
+          "sma50": 81321.15617200155,
+          "distanceFromSma20Pct": 1.5228426395939014,
+          "distanceFromSma50Pct": 3.092783505154643,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 81394.41114202938,
+              "high": 81665.23605839408,
+              "low": 81379.45839117163,
+              "close": 81643.88332639783,
+              "volume": 51.89803569111973
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 81643.88332639783,
+              "high": 81922.02107779797,
+              "low": 81627.76468841633,
+              "close": 81908.44284733318,
+              "volume": 68.23690041899681
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 81908.44284733318,
+              "high": 82281.02313546003,
+              "low": 81845.01995581051,
+              "close": 82247.40731596891,
+              "volume": 68.39604781009257
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 82247.40731596891,
+              "high": 82719.48008081809,
+              "low": 82190.17729217924,
+              "close": 82657.23447502582,
+              "volume": 62.903272677212954
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 82657.23447502582,
+              "high": 82926.13654927089,
+              "low": 82653.70288714995,
+              "close": 82864.21325729611,
+              "volume": 64.37286623753607
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 82864.21325729611,
+              "high": 83065.69316937414,
+              "low": 82848.93299295503,
+              "close": 83020.03249235392,
+              "volume": 53.00526418723166
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83020.03249235392,
+              "high": 83217.42722950758,
+              "low": 82959.24701237642,
+              "close": 83153.99225403028,
+              "volume": 51.368838478811085
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83153.99225403028,
+              "high": 83397.87761067336,
+              "low": 83132.25317370548,
+              "close": 83385.39294725412,
+              "volume": 69.068174357526
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83385.39294725412,
+              "high": 83720.4042864857,
+              "low": 83329.32879422346,
+              "close": 83715.00581726692,
+              "volume": 62.85025903489441
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83715.00581726692,
+              "high": 83894.86616058172,
+              "low": 83655.10298023968,
+              "close": 83836.24347629026,
+              "volume": 52.91413413360715
+            }
+          ],
+          "volume": 75,
+          "averageVolume": 60,
+          "volumeRatio": 1.25,
+          "bestBid": 83823.66803976882,
+          "bestAsk": 83848.8189128117,
+          "spreadPct": 0.03,
+          "bidVolume": 44.25,
+          "askVolume": 30.750000000000004,
+          "orderBookImbalance": 0.18,
+          "markPrice": 83841.92839940649,
+          "fundingRate": 0.0004,
+          "indexPrice": 83829.33907168174
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "bullish",
+        "highBurdenToClose": false,
+        "notes": [
+          "Price, SMA20, SMA50, momentum, RSI, and order-book imbalance all converge bullish."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.85,
+          "reason": "Bullish structure, momentum, volume and order‑book support upward move"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "volatility_spike-001-20260910",
+        "regime": "volatility_spike",
+        "description": "Sudden volatility spike: elevated ATR/volatility, choppy candles, wide spread, no clear net direction.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 83647.9960102681,
+          "previousPrice": 83733.04815805596,
+          "priceChangePct": -0.10157536320343219,
+          "momentum": 0.305207010358572,
+          "volatilityPct": 4.5,
+          "atr": 650,
+          "rsi": 44.94067746773362,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": -0.41905236872844404,
+          "distanceFromSma50Pct": -0.41905236872844404,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 83647.9960102681,
+              "high": 84249.90139773316,
+              "low": 83641.24993479399,
+              "close": 83891.09712802604,
+              "volume": 57.707628859207034
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 83891.09712802604,
+              "high": 83897.9069403667,
+              "low": 83174.2640363607,
+              "close": 83585.07156144212,
+              "volume": 64.14769350551069
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 83585.07156144212,
+              "high": 83660.4660483399,
+              "low": 82701.65564746197,
+              "close": 83515.26652887886,
+              "volume": 55.53327464032918
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83515.26652887886,
+              "high": 84727.53994492038,
+              "low": 82891.83295274341,
+              "close": 84384.41912843303,
+              "volume": 53.51521695498377
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 84384.41912843303,
+              "high": 86688.43647913441,
+              "low": 84114.2674728747,
+              "close": 85911.16144542079,
+              "volume": 68.22381841018796
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 85911.16144542079,
+              "high": 86686.40247124697,
+              "low": 85680.8629236271,
+              "close": 85992.37638306562,
+              "volume": 56.972182700410485
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 85992.37638306562,
+              "high": 86745.03854820204,
+              "low": 85737.21458623094,
+              "close": 86470.11622975583,
+              "volume": 65.59070580638945
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 86470.11622975583,
+              "high": 86659.87084402918,
+              "low": 85082.01562834163,
+              "close": 85755.34080664534,
+              "volume": 56.456565796397626
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 85755.34080664534,
+              "high": 85769.81843700736,
+              "low": 84693.73459998434,
+              "close": 85231.75029680114,
+              "volume": 68.31436809618026
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 85231.75029680114,
+              "high": 87783.7156096711,
+              "low": 85115.05115419763,
+              "close": 83647.9960102681,
+              "volume": 53.470873925834894
+            }
+          ],
+          "volume": 140,
+          "averageVolume": 60,
+          "volumeRatio": 2.3333333333333335,
+          "bestBid": 83597.80721266195,
+          "bestAsk": 83698.18480787426,
+          "spreadPct": 0.12,
+          "bidVolume": 70,
+          "askVolume": 70,
+          "orderBookImbalance": 0,
+          "markPrice": 83642.85377589124,
+          "fundingRate": 0.0001,
+          "indexPrice": 83636.54515507087
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "High volatility alone is not a directional signal per the system prompt."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "HOLD",
+          "confidence": 0.45,
+          "reason": "mixed signals, price below SMA, no clear direction"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "HOLD",
+        "qty": 0,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "volume_spike-001-20260910",
+        "regime": "volume_spike",
+        "description": "Volume spike (volumeRatio well above 1) without a confirmed price trend to accompany it.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84079.72907820717,
+          "previousPrice": 83948.40624197808,
+          "priceChangePct": 0.15643279260186288,
+          "momentum": 1.3068146172445267,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 50,
+          "sma20": 84000,
+          "sma50": 84000,
+          "distanceFromSma20Pct": 0.09491556929424405,
+          "distanceFromSma50Pct": 0.09491556929424405,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 84079.72907820717,
+              "high": 84197.03244238043,
+              "low": 84006.46020120537,
+              "close": 84160.67887397751,
+              "volume": 66.58136113546789
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 84160.67887397751,
+              "high": 84222.44293936904,
+              "low": 84044.89575987557,
+              "close": 84075.67019191654,
+              "volume": 59.39225715585053
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 84075.67019191654,
+              "high": 84141.28552364279,
+              "low": 83935.22834989984,
+              "close": 83968.74649838086,
+              "volume": 59.83746215701103
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 83968.74649838086,
+              "high": 84261.27282828181,
+              "low": 83906.23085641736,
+              "close": 84169.87212535286,
+              "volume": 63.556515448726714
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 84169.87212535286,
+              "high": 84502.80207600168,
+              "low": 84134.2153279237,
+              "close": 84408.05663747629,
+              "volume": 68.07729602325708
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 84408.05663747629,
+              "high": 84683.67922684917,
+              "low": 84356.12431630927,
+              "close": 84637.46374966137,
+              "volume": 55.61250110156834
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 84637.46374966137,
+              "high": 84646.82215415947,
+              "low": 84540.73354056195,
+              "close": 84560.21693861006,
+              "volume": 56.90680737607181
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 84560.21693861006,
+              "high": 84690.61439093143,
+              "low": 84486.80770169321,
+              "close": 84672.33946517138,
+              "volume": 63.937528473325074
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 84672.33946517138,
+              "high": 84750.70487693655,
+              "low": 84545.313404323,
+              "close": 84581.43666211513,
+              "volume": 63.35886649787426
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 84581.43666211513,
+              "high": 84633.99666023716,
+              "low": 84535.26322895063,
+              "close": 84079.72907820717,
+              "volume": 50.71728036738932
+            }
+          ],
+          "volume": 220,
+          "averageVolume": 60,
+          "volumeRatio": 3.6666666666666665,
+          "bestBid": 84067.11711884543,
+          "bestAsk": 84092.3410375689,
+          "spreadPct": 0.03,
+          "bidVolume": 110,
+          "askVolume": 110,
+          "orderBookImbalance": 0,
+          "markPrice": 84075.2747800735,
+          "fundingRate": 0.0001,
+          "indexPrice": 84076.33097482318
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Volume alone doesn't decide direction per the system prompt."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.7,
+          "reason": "price above SMAs, strong momentum, high volume supports upside"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "overbought-000-20260910",
+        "regime": "overbought",
+        "description": "RSI deep in overbought territory in isolation, without independent confirming signals.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84318.59249280766,
+          "previousPrice": 83896.99953034362,
+          "priceChangePct": 0.5025125628140739,
+          "momentum": 1.2,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 82,
+          "sma20": 83475.40656787957,
+          "sma50": 84000,
+          "distanceFromSma20Pct": 1.010101010101017,
+          "distanceFromSma50Pct": 0.37927677715197206,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 81075.56970462274,
+              "high": 81623.35993297615,
+              "low": 80985.82777665877,
+              "close": 81582.958336154,
+              "volume": 61.53858427423984
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 81582.958336154,
+              "high": 82001.25103102956,
+              "low": 81535.45765629786,
+              "close": 81935.00320046335,
+              "volume": 59.41998972557485
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 81935.00320046335,
+              "high": 82329.79774047121,
+              "low": 81839.15790532339,
+              "close": 82253.53551012072,
+              "volume": 54.38843711744994
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 82253.53551012072,
+              "high": 82579.4507199228,
+              "low": 82165.08259832737,
+              "close": 82535.95949935736,
+              "volume": 56.15595555398613
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 82535.95949935736,
+              "high": 82698.52132598641,
+              "low": 82482.45812133586,
+              "close": 82692.33563144656,
+              "volume": 65.78304467722774
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 82692.33563144656,
+              "high": 83215.60115005061,
+              "low": 82648.4092584822,
+              "close": 83121.86079763295,
+              "volume": 68.913653367199
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 83121.86079763295,
+              "high": 83383.16491337569,
+              "low": 83117.63421323479,
+              "close": 83351.86285236174,
+              "volume": 59.649598146788776
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 83351.86285236174,
+              "high": 83572.44629514306,
+              "low": 83271.40457566481,
+              "close": 83567.71402068851,
+              "volume": 53.331742668524384
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83567.71402068851,
+              "high": 83857.2014421044,
+              "low": 83504.13603442248,
+              "close": 83822.9619859043,
+              "volume": 56.65744591038674
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83822.9619859043,
+              "high": 84185.81025865098,
+              "low": 83806.25742814527,
+              "close": 84318.59249280766,
+              "volume": 51.85280241537839
+            }
+          ],
+          "volume": 60,
+          "averageVolume": 60,
+          "volumeRatio": 1,
+          "bestBid": 84305.94470393374,
+          "bestAsk": 84331.24028168157,
+          "spreadPct": 0.03,
+          "bidVolume": 30,
+          "askVolume": 30,
+          "orderBookImbalance": 0,
+          "markPrice": 84324.31355027168,
+          "fundingRate": 0.0001,
+          "indexPrice": 84309.6550479228
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "neutral",
+        "highBurdenToClose": false,
+        "notes": [
+          "Per the system prompt, RSI alone is never an automatic trigger - not strictly graded."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.78,
+          "reason": "price above SMAs, positive momentum, strong volume"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    },
+    {
+      "scenario": {
+        "id": "strong_trend-000-20260910",
+        "regime": "strong_trend",
+        "description": "Strong bullish trend: every major signal (price/SMA20/SMA50/momentum/RSI/order-flow/funding) converges the same direction.",
+        "market": {
+          "timestamp": "1970-01-01T00:00:00.000Z",
+          "category": "USDT-FUTURES",
+          "symbol": "BTCUSDT",
+          "raw": {
+            "synthetic": true
+          },
+          "lastPrice": 84277.20005228184,
+          "previousPrice": 83265.87365165446,
+          "priceChangePct": 1.214574898785425,
+          "momentum": 3,
+          "volatilityPct": 0.8,
+          "atr": 150,
+          "rsi": 68,
+          "sma20": 82591.6560512362,
+          "sma50": 80484.72604992916,
+          "distanceFromSma20Pct": 2.0408163265306123,
+          "distanceFromSma50Pct": 4.712041884816754,
+          "recentCandles": [
+            {
+              "timestamp": 1790380800000,
+              "open": 80264.00004979223,
+              "high": 80610.73089596171,
+              "low": 80224.02413287973,
+              "close": 80579.90738760629,
+              "volume": 55.29913293663412
+            },
+            {
+              "timestamp": 1790381100000,
+              "open": 80579.90738760629,
+              "high": 81028.0097298294,
+              "low": 80518.15883080875,
+              "close": 81020.89866616626,
+              "volume": 67.05534965265542
+            },
+            {
+              "timestamp": 1790381400000,
+              "open": 81020.89866616626,
+              "high": 81305.45851383738,
+              "low": 81012.37798876369,
+              "close": 81293.35687071139,
+              "volume": 53.857971536926925
+            },
+            {
+              "timestamp": 1790381700000,
+              "open": 81293.35687071139,
+              "high": 81618.00999877993,
+              "low": 81242.21565356363,
+              "close": 81600.87392075828,
+              "volume": 69.27174721378833
+            },
+            {
+              "timestamp": 1790382000000,
+              "open": 81600.87392075828,
+              "high": 82140.6828588256,
+              "low": 81582.32600455814,
+              "close": 82120.75333719124,
+              "volume": 50.74954301584512
+            },
+            {
+              "timestamp": 1790382300000,
+              "open": 82120.75333719124,
+              "high": 82525.82133432863,
+              "low": 82096.61373900948,
+              "close": 82505.8109023476,
+              "volume": 52.44531961623579
+            },
+            {
+              "timestamp": 1790382600000,
+              "open": 82505.8109023476,
+              "high": 82833.0913406759,
+              "low": 82452.77348076423,
+              "close": 82823.7365152027,
+              "volume": 51.582772359251976
+            },
+            {
+              "timestamp": 1790382900000,
+              "open": 82823.7365152027,
+              "high": 83367.226789743,
+              "low": 82781.40201180354,
+              "close": 83336.72610633745,
+              "volume": 65.21892570424825
+            },
+            {
+              "timestamp": 1790383200000,
+              "open": 83336.72610633745,
+              "high": 83655.18693366493,
+              "low": 83271.2923086708,
+              "close": 83595.49824793739,
+              "volume": 65.72017884347588
+            },
+            {
+              "timestamp": 1790383500000,
+              "open": 83595.49824793739,
+              "high": 84023.49379976296,
+              "low": 83573.982015122,
+              "close": 84277.20005228184,
+              "volume": 51.41573503613472
+            }
+          ],
+          "volume": 110,
+          "averageVolume": 60,
+          "volumeRatio": 1.8333333333333333,
+          "bestBid": 84264.558472274,
+          "bestAsk": 84289.84163228968,
+          "spreadPct": 0.03,
+          "bidVolume": 68.75,
+          "askVolume": 41.25,
+          "orderBookImbalance": 0.25,
+          "markPrice": 84270.97439249203,
+          "fundingRate": 0.0005,
+          "indexPrice": 84274.26677146644
+        },
+        "position": {
+          "available": true,
+          "side": "FLAT",
+          "entryPrice": null,
+          "quantity": null,
+          "leverage": null,
+          "unrealizedPnl": null,
+          "liquidationPrice": null,
+          "margin": null,
+          "positionId": null,
+          "raw": null,
+          "error": null
+        },
+        "expectedBias": "bullish",
+        "highBurdenToClose": false,
+        "notes": [
+          "Maximum convergence - graded strictly against the opposite direction."
+        ]
+      },
+      "agentDecision": {
+        "decision": {
+          "action": "OPEN_LONG",
+          "confidence": 0.78,
+          "reason": "Bullish structure, momentum, volume support"
+        },
+        "provider": "groq",
+        "model": "openai/gpt-oss-120b"
+      },
+      "riskVerdict": {
+        "approved": true,
+        "approvedAction": "OPEN_LONG",
+        "qty": 0.00023,
+        "leverage": 3,
+        "reasons": []
+      },
+      "passed": true,
+      "failure": {
+        "category": "none",
+        "details": [],
+        "severity": null
+      }
+    }
+  ]
+}
