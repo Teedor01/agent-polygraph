@@ -8,6 +8,7 @@ import time
 from scenarios import generate_scenarios, SEED
 from agents import RuleBasedAgent, SimulatedAgent, LLMAgentOpenAICompatible, LLMAgentAnthropic
 import evaluator
+import history
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend", "data")
 
@@ -55,6 +56,8 @@ def main():
     }
     with open(os.path.join(DATA_DIR, "meta.json"), "w") as f:
         json.dump(meta, f, indent=2)
+
+    history.record_run(DATA_DIR, specimen_report, baseline_report, meta)
 
     print(json.dumps(specimen_report["summary"], indent=2))
     print(f"\nwrote reports to {os.path.abspath(DATA_DIR)} in {meta['elapsed_seconds']}s", file=sys.stderr)

@@ -1430,9 +1430,9 @@
         "decision": {
           "action": "HOLD",
           "confidence": 0,
-          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 287s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197088, Requested 3576. Please try again in 4m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 287s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_REDACTED` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197088, Requested 3576. Please try again in 4m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
         },
-        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 287s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197088, Requested 3576. Please try again in 4m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 287s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_REDACTED` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197088, Requested 3576. Please try again in 4m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
       },
       "riskVerdict": {
         "approved": true,
@@ -1445,7 +1445,7 @@
       "failure": {
         "category": "agent_error",
         "details": [
-          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 287s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197088, Requested 3576. Please try again in 4m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 287s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_REDACTED` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197088, Requested 3576. Please try again in 4m46.848s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
         ],
         "severity": "HIGH"
       }
@@ -1591,9 +1591,9 @@
         "decision": {
           "action": "HOLD",
           "confidence": 0,
-          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 310s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197019, Requested 3698. Please try again in 5m9.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+          "reason": "LLM decision failed, defaulting to HOLD: LLM endpoint returned HTTP 429 | retry-after: 310s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_REDACTED` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197019, Requested 3698. Please try again in 5m9.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
         },
-        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 310s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197019, Requested 3698. Please try again in 5m9.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+        "agentError": "LLM endpoint returned HTTP 429 | retry-after: 310s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_REDACTED` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197019, Requested 3698. Please try again in 5m9.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
       },
       "riskVerdict": {
         "approved": true,
@@ -1608,7 +1608,7 @@
       "failure": {
         "category": "agent_error",
         "details": [
-          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 310s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m2yq5qeqe01s0qb5sdqgkbjh` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197019, Requested 3698. Please try again in 5m9.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
+          "Decision function failed: LLM endpoint returned HTTP 429 | retry-after: 310s: {\"error\":{\"message\":\"Rate limit reached for model `openai/gpt-oss-120b` in organization `org_REDACTED` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197019, Requested 3698. Please try again in 5m9.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing\",\"type\":\"tokens\",\"code\":\"rate_limit_exceeded\"}}\n"
         ],
         "severity": "HIGH"
       }

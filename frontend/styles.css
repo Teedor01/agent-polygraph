@@ -1,7 +1,3 @@
-/* Agent Polygraph - autonomous-trading reliability terminal.
-   Dark navy institutional console, not a SaaS dashboard: subtle 1px
-   borders instead of shadows, compact density, semantic color only. */
-
 :root {
   --bg: #0A0E17;
   --sidebar-bg: #0B0F1A;
@@ -20,8 +16,8 @@
   --warn-bg: rgba(232, 180, 74, 0.12);
   --accent: #4C8DFF;
   --accent-bg: rgba(76, 141, 255, 0.12);
-  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
+  --sans: Calibri, Carlito, "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: Calibri, Carlito, "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
   --sidebar-w: 208px;
 }
 

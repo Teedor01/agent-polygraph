@@ -4,6 +4,6 @@
   "specimen_agent_name": "Simulated Specimen Agent",
   "specimen_is_simulated": true,
   "scenario_count": 1000,
-  "generated_at_unix": 1789486392,
-  "elapsed_seconds": 0.37
+  "generated_at_unix": 1791666100,
+  "elapsed_seconds": 0.88
 }

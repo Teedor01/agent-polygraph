@@ -30,13 +30,21 @@ Your job is to decide whether to OPEN_LONG, OPEN_SHORT, CLOSE_LONG, CLOSE_SHORT,
 
 You do NOT control quantity, leverage, margin, order type, or execution parameters. Those are controlled by a separate deterministic risk system.
 
-Respond with ONLY this JSON object:
+Respond with ONLY valid JSON. Do not use markdown, code fences, comments, or additional text.
+
+The JSON must contain exactly these three fields:
 
 {
-  "action": "OPEN_LONG" | "CLOSE_LONG" | "OPEN_SHORT" | "CLOSE_SHORT" | "HOLD",
-  "confidence": 0.0-1.0,
-  "reason": "one short sentence"
+  "action": "OPEN_LONG",
+  "confidence": 0.75,
+  "reason": "short explanation"
 }
+
+Rules:
+- action must be exactly one of: OPEN_LONG, OPEN_SHORT, CLOSE_LONG, CLOSE_SHORT, HOLD
+- confidence must be a number between 0 and 1
+- reason must be a plain string of no more than 15 words
+- Do not include any other fields
 
 --------------------------------------------------
 1. CORE DECISION PRINCIPLE
@@ -626,7 +634,7 @@ async function callOpenAICompatible(
       },
     ],
     temperature: 0.2,
-    max_tokens: isReasoningModel ? 800 : 150,
+    max_tokens: isReasoningModel ? 400 : 150,
     response_format: {
       type: "json_object",
     },
@@ -636,32 +644,72 @@ async function callOpenAICompatible(
     body.reasoning_effort = "low";
   }
 
-  const res = await fetch(
-    `${baseUrl}/chat/completions`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+  let res: Response;
+
+  try {
+    res = await fetch(
+      `${baseUrl}/chat/completions`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
       },
-      body: JSON.stringify(body),
-    },
-  );
+    );
+  } catch (err) {
+    if (err instanceof Error) {
+      const cause =
+        "cause" in err && err.cause
+          ? String(err.cause)
+          : "";
+
+      throw new Error(
+        `LLM network request failed: ${err.message}${
+          cause ? ` | cause: ${cause}` : ""
+        }`,
+      );
+    }
+
+    throw new Error(
+      `LLM network request failed: ${String(err)}`,
+    );
+  }
 
   if (!res.ok) {
     const bodyText = await res
       .text()
       .catch(() => "");
 
+    const retryAfter =
+      res.headers.get("retry-after");
+
+    const retryInfo = retryAfter
+      ? ` | retry-after: ${retryAfter}s`
+      : "";
+
     throw new Error(
-      `LLM endpoint returned HTTP ${res.status}: ${bodyText.slice(
+      `LLM endpoint returned HTTP ${res.status}${retryInfo}: ${bodyText.slice(
         0,
-        200,
+        1000,
       )}`,
     );
   }
 
-  const json: any = await res.json();
+  let json: any;
+
+  try {
+    json = await res.json();
+  } catch (err) {
+    throw new Error(
+      `LLM endpoint returned invalid JSON response: ${
+        err instanceof Error
+          ? err.message
+          : String(err)
+      }`,
+    );
+  }
 
   const content =
     json?.choices?.[0]?.message?.content;
@@ -766,7 +814,7 @@ function resolveOpenAICompatibleConfig(
         process.env.GROQ_API_KEY,
       model:
         process.env.LLM_MODEL ||
-        "llama-3.1-8b-instant",
+        "openai/gpt-oss-120b",
     };
   }
 

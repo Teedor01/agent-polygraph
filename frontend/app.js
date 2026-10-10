@@ -1,3 +1,15 @@
+/* Agent Polygraph - reliability terminal.
+ * Crash Tests: every number read directly from data/report.json /
+ * data/baseline_report.json - nothing invented.
+ * Paper Trading: every number read directly from data/real_trading.json
+ * (itself exported from real_metrics/real_report.json via
+ * polygraph_ingestion). The two are never merged into one score. */
+
+/* Trade tables show the most recent trade first (ISO timestamps sort lexically). Returns a copy. */
+function newestFirst(trades) {
+  return [...trades].sort((a, b) => String(b.exit_time).localeCompare(String(a.exit_time)));
+}
+
 const state = {
   reports: {},
   meta: null,
@@ -29,7 +41,9 @@ const CATEGORY_LABELS = {
 
 const CATEGORY_SWATCH = ["#4C8DFF","#3ED68C","#F1555C","#E8B44A","#B98CFF","#4FD1C5","#F5A3C7","#8891A5","#FF9F5A","#5AC8FA","#C4E86B","#E27DFF"];
 
-
+/* Machine-readable failure taxonomy assigned by backend/evaluator.py
+ * (market_state.FAILURE_CATEGORIES), from actual scenario evidence -
+ * these labels are display-only, the category value itself is data. */
 const FAILURE_CATEGORY_LABELS = {
   risk_violation: "Risk violation",
   decision_inconsistency: "Decision inconsistency",
@@ -73,7 +87,11 @@ function scoreClass(v) { return v >= 90 ? "pass" : v >= 70 ? "warn" : "fail"; }
 function na(v, fmt) { return (v === null || v === undefined) ? '<span class="stat-value na">N/A</span>' : fmt(v); }
 function shortTs(ts) { return ts ? ts.slice(0, 16).replace("T", " ") : "N/A"; }
 
-
+/* Decision provenance badge. Only ever shows one of these three exact
+ * labels - never a provider or model name, per the honesty scope for
+ * this feature. decision_source is the sole source of truth; absence
+ * of the field (older log lines) defaults to "deterministic", which is
+ * accurate since that was the only mode that existed at the time. */
 function provenanceBadge(source) {
   const s = source || "deterministic";
   if (s === "llm") return `<span class="badge neutral">LLM</span>`;
@@ -81,7 +99,9 @@ function provenanceBadge(source) {
   return `<span class="badge dim">DETERMINISTIC</span>`;
 }
 
-
+/* Expandable reasoning/confidence detail - only rendered when the
+ * fields actually exist in the record. Nothing here is generated; it
+ * is a direct, unmodified display of what was recorded in the JSONL. */
 function llmDetailToggle(uid, reason, confidence) {
   if (!reason && confidence === null) return "";
   return `
@@ -128,6 +148,7 @@ function renderTopStatus() {
   const val = document.getElementById("status-value");
   dot.className = "dot";
   val.textContent = "Operational";
+  // A stored Spot run swaps the Spot reports on every Spot page: say so everywhere.
   let banner = document.getElementById("spot-view-banner");
   if (!banner) {
     banner = document.createElement("div");
@@ -264,7 +285,10 @@ function passFailBar(passed, failed) {
   `;
 }
 
-
+/* Real-evidence-only execution timeline. Only fields that genuinely
+ * exist in the real trading log are shown; nothing is invented for
+ * steps the data doesn't cover (e.g. the original decision rationale
+ * isn't in real_report.json, so that step just isn't fabricated). */
 function renderExecutionTimeline(containerId, real) {
   const el = document.getElementById(containerId);
   if (!real) { el.innerHTML = `<div class="hint-empty">No executions yet</div>`; return; }
@@ -423,6 +447,9 @@ function renderCrashTestsPage() {
 }
 
 function failureCategoryOf(t) {
+  // Prefer the machine-readable category backend/evaluator.py assigns
+  // from actual evidence. Fall back to the old heuristic only for a
+  // report.json generated before this field existed.
   if (t.failure_category) return FAILURE_CATEGORY_LABELS[t.failure_category] || t.failure_category;
   if (t.risk_violation) return "Risk violation";
   if (t.consistency_flagged) return "Inconsistency";
@@ -437,7 +464,7 @@ function categoryCounts() {
   return counts;
 }
 
-
+/* The killer feature: same numbers, five wordings, does the decision change. */
 function renderConsistencySpotlight() {
   const el = document.getElementById("ct-consistency");
   const groups = {};
@@ -701,7 +728,7 @@ function renderPaperTradingPage() {
       <div class="panel-title" style="font-size:12.5px;">Trade history</div>
       <div class="table-scroll section-gap">
         <table class="dtable"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Entry Px</th><th>Exit Px</th><th>Entry Decision</th><th>Exit Decision</th><th>Fees</th><th>Net P&amp;L</th><th>Return</th></tr></thead>
-        <tbody>${trades.length ? trades.map((t, i) => `
+        <tbody>${trades.length ? newestFirst(trades).map((t, i) => `
           <tr>
             <td>${shortTs(t.exit_time)}</td>
             <td>BTCUSDT</td>
@@ -734,6 +761,14 @@ function renderPaperTradingPage() {
 }
 
 /* ================= PAPER TRADING (FUTURES) ================= */
+/* Deliberately separate from renderPaperTradingPage() above: different
+ * data file (data/real_futures_trading.json), different position model
+ * (LONG/SHORT/FLAT, leverage), and futures P&L here is explicitly
+ * approximate (see pnl_basis on each trade / pnl_methodology_note) since
+ * Bitget's close-positions endpoint doesn't return a confirmed fill
+ * price - the UI surfaces that caveat rather than hiding it. Never
+ * merged into the spot page or its numbers. */
+
 function renderFuturesPaperTradingPage() {
   const el = document.getElementById("futures-paper-trading-content");
   const real = state.realFutures && state.realFutures.report;
@@ -777,7 +812,7 @@ function renderFuturesPaperTradingPage() {
       <div class="panel-title" style="font-size:12.5px;">Trade history</div>
       <div class="table-scroll section-gap">
         <table class="dtable"><thead><tr><th>Time</th><th>Symbol</th><th>Side</th><th>Qty</th><th>Leverage</th><th>Entry Px</th><th>Approx. Exit Px</th><th>Entry Decision</th><th>Exit Decision</th><th>Approx. P&amp;L</th></tr></thead>
-        <tbody>${trades.length ? trades.map((t, i) => `
+        <tbody>${trades.length ? newestFirst(trades).map((t, i) => `
           <tr>
             <td>${shortTs(t.exit_time)}</td>
             <td>BTCUSDT</td>
@@ -810,6 +845,13 @@ function renderFuturesPaperTradingPage() {
 }
 
 /* ================= CRASH TESTS (FUTURES / POLYGRAPH) ================= */
+/* Reads data/futures_crashtest.json, produced by the TypeScript Polygraph
+ * CLI (agent/src/polygraph/run.ts) via `npm run polygraph -- --out=...` -
+ * entirely separate pipeline from the Python synthetic benchmark above
+ * (different agent, different scenario engine, different failure
+ * taxonomy), never merged into it. Pure synthetic/simulated evaluation:
+ * no real Bitget order is ever placed to produce this data. */
+
 const FUTURES_FAILURE_LABELS = {
   risk_violation: "Risk violation",
   decision_inconsistency: "Decision inconsistency",
@@ -838,9 +880,11 @@ function escHtml(v) {
   return String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-
+/* null/undefined means "not computable or withheld" - never rendered as "null%", 0% or 100%. */
 function fmtPctNA(v) { return v === null || v === undefined ? "n/a" : `${v}%`; }
 
+/* Reports written before run metadata existed have no `run` block: infer from the agent
+ * name and say so, rather than presenting a guess as fact. */
 function futuresRunInfo(r) {
   if (r.run) return { kind: r.run.kind, provider: r.run.provider, model: r.run.model, inferred: false };
   // Imported legacy file: the history index recorded what could be inferred (and says which fields).

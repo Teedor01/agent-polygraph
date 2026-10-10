@@ -10,13 +10,20 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "mock": "npm run build && node lib/agent.js --mode mock",
-    "paper": "npm run build && node lib/agent.js --mode paper"
+    "paper": "npm run build && node lib/agent.js --mode paper",
+    "mock:futures": "npm run build && node lib/futures/agent.js --mode mock",
+    "paper:futures": "npm run build && node lib/futures/agent.js --mode paper",
+    "test:futures": "npm run build && node --test lib/futures/*.test.js",
+    "polygraph": "npm run build && node lib/polygraph/run.js",
+    "test:polygraph": "npm run build && node --test lib/polygraph/*.test.js",
+    "test:all": "npm run build && node --test lib/futures/*.test.js lib/polygraph/*.test.js"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1136.0",
     "@bitget-ai/bitget-agent-sdk": "^3.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.5.0",
-    "@types/node": "^20.14.0"
+    "@types/node": "^20.14.0",
+    "typescript": "^5.5.0"
   }
 }

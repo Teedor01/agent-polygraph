@@ -10,11 +10,11 @@
       "note": "Computed exclusively from real Bitget paper-trading futures fills. Not synthetic, not a backtest."
     },
     "metrics": {
-      "trade_count": 38,
-      "win_rate_pct": 21.05,
-      "cumulative_approx_pnl_usdt": -0.55448,
+      "trade_count": 39,
+      "win_rate_pct": 23.08,
+      "cumulative_approx_pnl_usdt": -0.49894,
       "max_drawdown_approx_usdt": 0.55874,
-      "sharpe_ratio": -0.1672,
+      "sharpe_ratio": -0.1473,
       "sharpe_note": null,
       "equity_curve": [
         {
@@ -168,6 +168,10 @@
         {
           "exit_time": "2026-10-07T23:42:16.305Z",
           "cumulative_approx_pnl_usdt": -0.55448
+        },
+        {
+          "exit_time": "2026-10-10T18:27:48.371Z",
+          "cumulative_approx_pnl_usdt": -0.49894
         }
       ],
       "trades_with_missing_pnl": 0,
@@ -896,6 +900,25 @@
         "exit_decision_source": "llm",
         "exit_llm_reason": "price rising, positive momentum, bullish candles",
         "exit_llm_confidence": 0.7
+      },
+      {
+        "side": "LONG",
+        "entry_time": "2026-10-10T04:07:57.869Z",
+        "exit_time": "2026-10-10T18:27:48.371Z",
+        "entry_price": 82678.7,
+        "approx_exit_price": 82963.3,
+        "exit_price_is_approximate": true,
+        "qty_base": 0.0002,
+        "leverage": 3,
+        "approx_realized_pnl_usdt": 0.05554,
+        "pnl_basis": "Bitget's own last-observed unrealizedPnl (from position.info) immediately before the close was submitted. NOT a confirmed post-fill realized P&L - closeAllPositions does not return a fill price in the installed SDK version, so no more precise figure is available.",
+        "holding_period_seconds": 51590.502,
+        "entry_decision_source": "llm",
+        "entry_llm_reason": "price above SMAs, positive momentum, supportive volume",
+        "entry_llm_confidence": 0.78,
+        "exit_decision_source": "llm",
+        "exit_llm_reason": "price below SMAs, negative momentum, weak volume",
+        "exit_llm_confidence": 0.65
       }
     ],
     "open_position": null

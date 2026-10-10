@@ -44,6 +44,33 @@ test("getFuturesPositionSnapshot returns a well-formed snapshot against the mock
   });
 });
 
+test("regression: a real confirmed Bitget getPositionInfo `list`-wrapped SHORT response is parsed correctly, not as FLAT", async () => {
+  await withMockContext(async (ctx) => {
+    ctx.mockServer!.setResponseOverride("getPositionInfo", {
+      list: [
+        {
+          posSide: "short",
+          total: "0.0002",
+          leverage: "3",
+          avgPrice: "84061.1",
+          unrealisedPnl: "-0.00056",
+          liquidationPrice: "5005841.5",
+        },
+      ],
+    });
+
+    const snap = await getFuturesPositionSnapshot(ctx);
+
+    assert.equal(snap.available, true);
+    assert.equal(snap.side, "SHORT");
+    assert.equal(snap.entryPrice, 84061.1);
+    assert.equal(snap.quantity, 0.0002);
+    assert.equal(snap.leverage, 3);
+    assert.equal(snap.unrealizedPnl, -0.00056);
+    assert.equal(snap.liquidationPrice, 5005841.5);
+  });
+});
+
 test("18. an approved OPEN_LONG round-trips through the real order.place tool without throwing", async () => {
   await withMockContext(async (ctx) => {
     const verdict = evaluateFuturesRisk(
@@ -67,8 +94,6 @@ test("18b. an approved CLOSE_LONG round-trips through the real position.close to
     assert.equal(verdict.approved, true);
     const result = await executeFuturesDecision(ctx, verdict);
     assert.ok(["closed", "error"].includes(result.status), `unexpected status ${result.status}`);
-    // Confirms this path went through position.close, not order.place -
-    // a "closed" status only exists on the closePosition branch.
   });
 });
 

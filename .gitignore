@@ -1,0 +1,15 @@
+# Node (agent/) build output and dependencies - regenerate with npm install / npm run build
+agent/node_modules/
+agent/lib/
+
+
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+
+# OS cruft
+.DS_Store
+
+*__init__.py
+*.env

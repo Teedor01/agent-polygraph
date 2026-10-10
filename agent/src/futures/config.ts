@@ -6,6 +6,7 @@ import {
   type BitgetConfig,
   type ToolSpec,
 } from "@bitget-ai/bitget-agent-sdk";
+import type { MockServer } from "@bitget-ai/bitget-agent-sdk/testing";
 import { FUTURES_MAX_LEVERAGE } from "./risk.js";
 
 export type FuturesRunMode = "mock" | "paper";
@@ -17,16 +18,15 @@ export interface FuturesRuntimeContext {
   config: BitgetConfig;
   client: BitgetRestClient;
   tools: ToolSpec[];
-  mockServer?: { stop: () => Promise<void>; baseUrl: string };
+  mockServer?: MockServer;
   instrument: { category: "USDT-FUTURES"; symbol: string };
 }
-
 
 const DEFAULT_FUTURES_INSTRUMENT = { category: "USDT-FUTURES" as const, symbol: "BTCUSDT" };
 
 async function applyAccountPolicy(ctx: FuturesRuntimeContext): Promise<void> {
   const accountConfigTool = ctx.tools.find((t) => t.name === "account_config");
-  if (!accountConfigTool) return; 
+  if (!accountConfigTool) return; // module not enabled in this config's tool surface; nothing to do
 
   const holdModeRes = await safeInvoke(
     accountConfigTool,
